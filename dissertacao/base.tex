@@ -1,0 +1,326 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% -------------------------
+% Pacotes essenciais
+% -------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,portuguese]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+% (Opcional, mas comum em dissertações)
+\usepackage{amsmath,amssymb,amsthm}
+
+% -------------------------
+% Margens (ajusta se o template UAb pedir outras)
+% -------------------------
+\geometry{
+  left=3cm,
+  right=2cm,
+  top=3cm,
+  bottom=2.5cm
+}
+
+\onehalfspacing
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+% =========================================================
+% Metadados (preenche depois)
+% =========================================================
+\newcommand{\UAbUniversity}{UNIVERSIDADE ABERTA}
+\newcommand{\DocTitle}{Formas Normais: da Lógica Matemática à Computação}
+\newcommand{\AuthorName}{Olivia Pachele Mattiazzo}
+\newcommand{\DegreeName}{Mestrado em Estatística, Matemática e Computação}
+\newcommand{\OrientadorUm}{Prof.\textsuperscript{ª} Dr.\textsuperscript{ª} Gilda Ferreira}
+\newcommand{\OrientadorDois}{Prof.\textsuperscript{ª} Dr.\textsuperscript{ª} Yves Robert}
+\newcommand{\DocMonthYear}{Novembro 2026}
+
+% =========================================================
+\begin{document}
+
+% =========================================================
+% CAPA 1 (com orientação / coorientação)
+% =========================================================
+\begin{titlepage}
+  \selectlanguage{english}
+  \thispagestyle{empty}
+  \begin{center}
+    {\Large \UAbUniversity \par}
+    \vspace{2.5cm}
+    {\Large \textbf{\DocTitle}\par}
+    \vspace{0.5cm}
+    {\Large \AuthorName\par}
+    \vspace{0.8cm}
+    {\Large \DegreeName\par}
+    \vspace{1.2cm}
+    {\large Orientadores: \OrientadorUm\par}
+    {\large e \OrientadorDois\par}
+    \vfill
+    {\Large \DocMonthYear\par}
+  \end{center}
+\end{titlepage}
+
+% =========================================================
+% CAPA 2 (sem orientação/coorientação)
+% =========================================================
+\begin{titlepage}
+  \selectlanguage{portuguese}
+  \thispagestyle{empty}
+  \begin{center}
+    {\Large \UAbUniversity \par}
+    \vspace{2.5cm}
+    {\Large \textbf{\DocTitle}\par}
+    \vspace{0.5cm}
+    {\Large \DocSubtitle\par}
+    \vspace{2.5cm}
+    {\Large \AuthorName\par}
+    \vspace{0.8cm}
+    {\Large \DegreeName\par}
+    \vfill
+    {\Large \DocMonthYear\par}
+  \end{center}
+\end{titlepage}
+
+% =========================================================
+% FRONTMATTER (numeração romana, como no PDF)
+% =========================================================
+\pagenumbering{roman}
+\setcounter{page}{2} % no PDF, a página ii é a licença CC
+
+% =========================================================
+% Creative Commons License (página ii no PDF)
+% =========================================================
+\selectlanguage{english}
+\chapter*{Creative Commons License}
+% (texto da licença aqui depois)
+
+% =========================================================
+% Acknowledgments (página iii)
+% =========================================================
+\chapter*{Acknowledgments}
+% (texto aqui depois)
+
+% =========================================================
+% Página em branco / separador (se precisares)
+% \clearpage\null\thispagestyle{empty}\clearpage
+
+% =========================================================
+% Dedicatória (no PDF: página com dedicatória curta)
+% =========================================================
+\clearpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+% (dedicatória aqui depois)
+\end{center}
+\vspace*{\fill}
+\clearpage
+
+% =========================================================
+% Resumo (pt)
+% =========================================================
+\selectlanguage{portuguese}
+\chapter*{Resumo}
+% (texto aqui depois)
+
+\noindent\textbf{Palavras-chave:} % palavra-chave 1; palavra-chave 2; palavra-chave 3.
+
+% =========================================================
+% Abstract (en)
+% =========================================================
+\selectlanguage{english}
+\chapter*{Abstract}
+% (texto aqui depois)
+
+\noindent\textbf{Keywords:} % keyword 1; keyword 2; keyword 3.
+
+% =========================================================
+% Resumo Alargado em Português
+% =========================================================
+\selectlanguage{portuguese}
+\chapter*{Resumo Alargado em Português}
+% (texto aqui depois)
+
+% =========================================================
+% (No PDF aparecem listas antes do corpo, com páginas em romano)
+% Contents / List of Tables / List of Figures / List of Abbreviations and Acronyms
+% =========================================================
+\selectlanguage{english}
+\tableofcontents
+\clearpage
+
+\listoftables
+\clearpage
+
+\listoffigures
+\clearpage
+
+\chapter*{List of Abbreviations and Acronyms}
+% (estrutura sugerida; preenche depois)
+\begin{description}
+  \item[ABBR] Full term
+\end{description}
+\clearpage
+
+% =========================================================
+% MAINMATTER (numeração arábica)
+% =========================================================
+\pagenumbering{arabic}
+\setcounter{page}{27} % no PDF, Introduction começa na p. 27
+
+% =========================================================
+% Introduction (no PDF aparece como secção principal, sem "Chapter 0")
+% =========================================================
+\selectlanguage{english}
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+% (texto aqui depois)
+
+% =========================================================
+% CHAPTER 1 : NUMERAL SYSTEMS
+% =========================================================
+\chapter{Numeral Systems}
+\section{Introduction to Numeral Systems}
+\section{Decimal System}
+\section{Binary System}
+\section{Octal and Hexadecimal Systems}
+\section{Numeral Systems and Boolean Algebra}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 2 : BOOLEAN ALGEBRA
+% =========================================================
+\chapter{Boolean Algebra}
+\section{Introduction to Boolean Algebra}
+\section{Definition and Fundamental Concepts}
+\section{Boolean Algebraic Identities and Properties}
+\section{De Morgan’s Laws}
+\section{Algebraic Simplification of Boolean Expressions}
+\section{Relationship with Set Theory}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 3 : LOGIC GATES
+% =========================================================
+\chapter{Logic Gates}
+\section{Introduction to Logic Gates in Digital Circuits}
+\section{Logic Gates}
+\section{Types of Logic Gates}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 4 : MODELLING OF DIGITAL CIRCUITS
+% =========================================================
+\chapter{Modelling of Digital Circuits}
+\section{Introduction to the Modelling of Digital Circuits}
+\section{Minterms and Maxterms}
+\section{Sum of Products}
+\section{Product of Sums}
+\section{Karnaugh Maps}
+\section{Karnaugh’s Minimization}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 5 : COMBINATIONAL CIRCUITS
+% =========================================================
+\chapter{Combinational Circuits}
+\section{Introduction to Combinational Circuits}
+\section{Adders and Subtractors}
+\section{Decoders and Encoders}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 6 : SEQUENTIAL CIRCUITS
+% =========================================================
+\chapter{Sequential Circuits}
+\section{Introduction to Sequential Circuits}
+\section{Latches}
+\section{Flip-flops}
+\section{Binary Counter}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 7 : NEURAL NETWORKS AND DEEP LEARNING
+% =========================================================
+\chapter{Neural Networks and Deep Learning}
+\section{Introduction to Deep Learning}
+\section{The Perceptron}
+\section{General Concepts}
+\section{Feed Forward Networks (FFNs)}
+\section{Gradient-Driven Optimization}
+\section{Backpropagation Algorithm}
+\section{Conclusion}
+
+% =========================================================
+% CHAPTER 8 : LOGIC GATE NEURAL NETWORKS
+% =========================================================
+\chapter{Logic Gate Neural Networks}
+\section{Introduction}
+\section{Logic Gate Networks (LGNs)}
+\section{Differentiable Logic Gate Networks}
+\section{Methodology}
+\section{Training an LGN}
+\section{Training an FFN}
+\section{Resources}
+\section{Discussion}
+\section{Conclusion}
+
+% =========================================================
+% Conclusion (no PDF aparece como secção final, não numerada)
+% =========================================================
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+% (texto aqui depois)
+
+% =========================================================
+% References (no PDF: "References")
+% =========================================================
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
+% (bibliografia aqui depois — BibTeX/Biber ou manual)
+
+% =========================================================
+% APPENDICES I–X (como no PDF)
+% =========================================================
+\appendix
+
+\chapter{Octal and Hexadecimal Systems}
+\section{Octal and Hexadecimal Systems}
+
+\chapter{Boolean Algebra and Set Theory}
+\section{Boolean Algebra and Set Theory}
+
+\chapter{Karnaugh’s Minimization}
+\section{Karnaugh’s Minimization for a Four-Variable Function}
+
+\chapter{Equations of the FA}
+\section{Equations of the FA}
+
+\chapter{Subtraction with the 2’s Complement Method}
+\section{Subtraction with the 2’s Complement Method}
+
+\chapter{Decoders and Encoders}
+\section{Decoders and Encoders}
+
+\chapter{Gradient Descent}
+\section{Gradient Descent}
+
+\chapter{Backpropagation Algorithm}
+\section{Backpropagation Algorithm}
+
+\chapter{Probabilistic T-norm and T-conorm Operations}
+\section{Probabilistic T-norm and T-conorm Operations}
+
+\chapter{Script in Python}
+\section{Script in Python}
+
+\end{document}

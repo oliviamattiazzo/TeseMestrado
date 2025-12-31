@@ -1,1 +1,2 @@
-dissertacao/confidencial
+dissertacao/*
+!dissertacao/base.tex
