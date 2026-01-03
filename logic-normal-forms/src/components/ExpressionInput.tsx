@@ -1,19 +1,30 @@
 import Editor from "@monaco-editor/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { normalizeAsciiInput, validateAsciiInput } from "../utils/logicInput";
+import SyntaxHelp from "./SyntaxHelp";
+import OperatorToolbar from "./OperatorToolbar";
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
+  onValidityChange?: (isValid: boolean) => void;
   placeholder?: string;
 };
 
-export default function ExpressionInput({ value, onChange, placeholder }: Props) {
+export default function ExpressionInput({ value, onChange, onValidityChange, placeholder }: Props) {
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
   const suppressRef = useRef(false);
+  const [flash, setFlash] = useState(false);
 
   const diagnostics = useMemo(() => validateAsciiInput(value), [value]);
+  
+  const showBadge = value.trim().length > 0;
+  const isValid = diagnostics.length === 0;
+
+  useEffect(() => {
+    onValidityChange?.(diagnostics.length !== 0);
+  }, [diagnostics, onValidityChange]);
 
   function applyMarkers() {
     const monaco = monacoRef.current;
@@ -40,91 +51,127 @@ export default function ExpressionInput({ value, onChange, placeholder }: Props)
     monaco.editor.setModelMarkers(model, "logic-input", markers);
   }
 
+  function insertAtCursor(token: string) {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    editor.focus();
+
+    const model = editor.getModel();
+    const selection = editor.getSelection();
+    if (!model || !selection) return;
+
+    const needsSpace = (t: string) => t === "&" || t === "|" || t === "->" || t === "<->";
+    const text = needsSpace(token) ? ` ${token} ` : token;
+
+    editor.executeEdits("insert-operator", [
+      {
+        range: selection,
+        text,
+        forceMoveMarkers: true,
+      },
+    ]);
+
+    triggerFlash();
+  }
+
+  function triggerFlash() {
+    setFlash(true);
+    window.setTimeout(() => setFlash(false), 320);
+  }
+
   return (
-    <div className="monacoWrap">
-      {!value.trim() && placeholder && (
-        <div className="monacoPlaceholder">{placeholder}</div>
-      )}
+    <div className="expressionField">
+      <div className="expressionHeaderRow">
+        <SyntaxHelp />
 
-      <Editor
-        height="160px"
-        defaultLanguage="plaintext"
-        theme="vs-dark"
-        value={value}
-        onMount={(editor, monaco) => {
-          editorRef.current = editor;
-          monacoRef.current = monaco;
-          
-          applyMarkers();
+        {showBadge && (
+          <span className={isValid ? "statusBadge ok" : "statusBadge err"}>
+            {isValid ? "Expressão válida ✓" : "Expressão inválida ✗"}
+          </span>
+        )}
+      </div>
 
-          editor.onDidChangeModelContent(() => {
-            setTimeout(applyMarkers, 0);
-          });
-        }}
-        onChange={(raw) => {
-          const nextRaw = raw ?? "";
+      <div className={flash ? "monacoWrap flash" : "monacoWrap"}>
+        {!value.trim() && placeholder && (
+          <div className="monacoPlaceholder">{placeholder}</div>
+        )}
 
-          // Normalização (ASCII-friendly)
-          const normalized = normalizeAsciiInput(nextRaw);
+        <Editor
+          height="160px"
+          defaultLanguage="plaintext"
+          theme="vs-dark"
+          value={value}
+          onMount={(editor, monaco) => {
+            editorRef.current = editor;
+            monacoRef.current = monaco;
+            
+            applyMarkers();
 
-          // Evitar loop: se normalizar não muda nada, só propaga
-          if (normalized === value) return;
+            editor.onDidChangeModelContent(() => {
+              setTimeout(applyMarkers, 0);
+            });
+          }}
+          onChange={(raw) => {
+            const nextRaw = raw ?? "";
 
-          // Se a normalização alterou o texto, atualiza sem “brigar” com o cursor
-          if (normalized !== nextRaw) {
-            const editor = editorRef.current;
-            if (editor && !suppressRef.current) {
-              suppressRef.current = true;
+            const normalized = normalizeAsciiInput(nextRaw);
 
-              const model = editor.getModel();
-              const sel = editor.getSelection();
+            if (normalized === value) return;
 
-              // aplica o valor normalizado direto no model, preservando seleção
-              model?.pushEditOperations(
-                [],
-                [
-                  {
-                    range: model.getFullModelRange(),
-                    text: normalized,
-                  },
-                ],
-                () => (sel ? [sel] : null)
-              );
+            if (normalized !== nextRaw) {
+              const editor = editorRef.current;
+              if (editor && !suppressRef.current) {
+                suppressRef.current = true;
 
-              // atualiza estado React
-              onChange(normalized);
+                const model = editor.getModel();
+                const sel = editor.getSelection();
 
-              // libera depois do tick
-              setTimeout(() => {
-                suppressRef.current = false;
-                applyMarkers();
-              }, 0);
+                model?.pushEditOperations(
+                  [],
+                  [
+                    {
+                      range: model.getFullModelRange(),
+                      text: normalized,
+                    },
+                  ],
+                  () => (sel ? [sel] : null)
+                );
 
-              return;
+                onChange(normalized);
+
+                setTimeout(() => {
+                  suppressRef.current = false;
+                  applyMarkers();
+                }, 0);
+
+                return;
+              }
             }
-          }
 
-          // Caso normalização não tenha alterado (ou sem editor), segue normal
-          onChange(normalized);
-          setTimeout(applyMarkers, 0);
-        }}
-        options={{
-          minimap: { enabled: false },
-          fontSize: 14,
-          lineNumbers: "off",
-          wordWrap: "on",
-          scrollBeyondLastLine: false,
-          overviewRulerLanes: 0,
-          glyphMargin: false,
-          folding: false,
-          renderLineHighlight: "none",
-          padding: { top: 10, bottom: 10 },
-          quickSuggestions: false,
-          suggestOnTriggerCharacters: false,
-        }}
-      />
+            onChange(normalized);
+            setTimeout(applyMarkers, 0);
+          }}
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            lineNumbers: "off",
+            wordWrap: "on",
+            scrollBeyondLastLine: false,
+            overviewRulerLanes: 0,
+            glyphMargin: false,
+            folding: false,
+            renderLineHighlight: "none",
+            padding: { top: 10, bottom: 10 },
+            quickSuggestions: false,
+            suggestOnTriggerCharacters: false,
+          }}
+        />
+      </div>
 
-      {/* resumo de erros abaixo do editor (aluno agradece) */}
+      <OperatorToolbar onInsert={insertAtCursor} />
+
+      {/* resumo de erros abaixo do editor */}
       {diagnostics.length > 0 && (
         <div className="inlineErrors">
           <div className="inlineErrorsTitle">Erros encontrados:</div>

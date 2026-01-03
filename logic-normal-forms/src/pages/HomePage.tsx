@@ -20,8 +20,9 @@ export default function HomePage() {
   const [expression, setExpression] = useState("");
   const [active, setActive] = useState<NormalForm>("CNF");
   const [result, setResult] = useState<NormalizeResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setNormalizationError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [sintaxError, setSintaxError] = useState(false);
 
   const steps: Step[] = useMemo(() => {
     if (!result) return [];
@@ -29,7 +30,7 @@ export default function HomePage() {
   }, [result, active]);
 
   async function handleNormalize() {
-    setError(null);
+    setNormalizationError(null);
     setIsRunning(true);
 
     try {
@@ -37,7 +38,7 @@ export default function HomePage() {
       await new Promise((r) => setTimeout(r, 250));
       setResult(MOCK);
     } catch (e) {
-      setError("Falha ao normalizar. Tenta novamente.");
+      setNormalizationError("Falha ao normalizar. Tenta novamente.");
     } finally {
       setIsRunning(false);
     }
@@ -46,7 +47,7 @@ export default function HomePage() {
   function handleClear() {
     setExpression("");
     setResult(null);
-    setError(null);
+    setNormalizationError(null);
   }
 
   return (
@@ -54,7 +55,7 @@ export default function HomePage() {
       <header className="header">
         <h1>Laboratório de Formas Normais</h1>
         <p className="subtitle">
-          Um ambiente para experimentação em lógica proposicional. Cole uma expressão lógica e veja a transformação passo a passo em CNF e DNF.
+          Um ambiente para experimentação em lógica proposicional. Escreva uma expressão lógica e veja a transformação passo a passo em CNF e DNF.
         </p>
       </header>
 
@@ -66,10 +67,11 @@ export default function HomePage() {
             value={expression}
             onChange={setExpression}
             placeholder="Ex: (p -> q) & ~(r | s)"
+            onValidityChange={(hasErrors) => setSintaxError(hasErrors)}
           />
 
           <div className="row">
-            <button onClick={handleNormalize} disabled={!expression.trim() || isRunning}>
+            <button onClick={handleNormalize} disabled={!expression.trim() || isRunning || sintaxError}>
               {isRunning ? "Normalizando..." : "Normalizar"}
             </button>
 
