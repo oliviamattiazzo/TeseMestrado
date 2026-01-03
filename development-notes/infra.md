@@ -10,7 +10,7 @@ A combinação das tecnologias acima permite a construção de uma interface inc
 <!-- Descrever um pouco mais cada tecnologia, especialmente o TypeScript -->
 
 ### Outros extras a pesquisar
-* Monaco Editor para a entrada da expressão
+* <s>Monaco Editor para a entrada da expressão</s> **Implementado!**
 * Componente de renderização LaTeX para mostrar as fórmulas de maneira adequada
 * Uma biblioteca de grafos para desenhar a árvore lógica do processo
 

@@ -52,9 +52,9 @@ export default function HomePage() {
   return (
     <div className="container">
       <header className="header">
-        <h1>Normal Forms Tutor</h1>
+        <h1>Laboratório de Formas Normais</h1>
         <p className="subtitle">
-          Cole uma expressão lógica e veja a transformação passo a passo em CNF e DNF.
+          Um ambiente para experimentação em lógica proposicional. Cole uma expressão lógica e veja a transformação passo a passo em CNF e DNF.
         </p>
       </header>
 
@@ -65,7 +65,7 @@ export default function HomePage() {
           <ExpressionInput
             value={expression}
             onChange={setExpression}
-            placeholder="Ex: (p → q) ∧ ¬(r ∨ s)"
+            placeholder="Ex: (p -> q) & ~(r | s)"
           />
 
           <div className="row">

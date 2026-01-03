@@ -175,3 +175,46 @@ button.secondary {
   margin-top: 22px;
   opacity: 0.65;
 }
+
+.monacoWrap {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  overflow: hidden;
+}
+
+.inlineErrors {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 180, 180, 0.25);
+  background: rgba(255, 180, 180, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.inlineErrorsTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.inlineErrors ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.monacoPlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 14px 14px;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 14px;
+}
+
+.monacoWrap .monaco-editor {
+  position: relative;
+  z-index: 1;
+}
