@@ -27,12 +27,6 @@ export function normalizeAsciiInput(raw: string) {
   return text;
 }
 
-export type Diagnostic = {
-  message: string;
-  start: number; // offset 0-based
-  end: number;   // offset exclusive
-};
-
 type TokenType =
   | "VAR"
   | "NOT"
@@ -134,29 +128,6 @@ function tokenize(text: string): { tokens: Token[]; diagnostics: Diagnostic[] } 
   }
 
   return { tokens, diagnostics };
-}
-
-function tokenLabel(t: TokenType) {
-  switch (t) {
-    case "VAR":
-      return "variável";
-    case "NOT":
-      return "negação '~'";
-    case "AND":
-      return "conjunção '&'";
-    case "OR":
-      return "disjunção '|'";
-    case "IMPL":
-      return "implicação '->'";
-    case "IFF":
-      return "bicondicional '<->'";
-    case "LPAREN":
-      return "'('";
-    case "RPAREN":
-      return "')'";
-    default:
-      return "símbolo";
-  }
 }
 
 export function validateAsciiInput(text: string) {
