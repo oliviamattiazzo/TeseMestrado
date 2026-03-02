@@ -3,6 +3,7 @@ import ExpressionInput from "../components/ExpressionInput";
 import ResultsPanel from "../components/ResultsPanel";
 import StepsPanel from "../components/StepsPanel";
 import type { NormalizeResponse, NormalForm, Step } from "../types/normalizer";
+import { normalize } from "../logic/normalize";
 
 const MOCK: NormalizeResponse = {
   cnf: "(p ∨ q) ∧ (¬p ∨ r)",
@@ -34,11 +35,12 @@ export default function HomePage() {
     setIsRunning(true);
 
     try {
-      // Por enquanto mock. Depois você troca pelo fetch do backend.
-      await new Promise((r) => setTimeout(r, 250));
-      setResult(MOCK);
+      // aqui você já está validando antes; ainda assim é bom proteger
+      const res = normalize(expression);
+      setResult(res);
     } catch (e) {
-      setNormalizationError("Falha ao normalizar. Tenta novamente.");
+      setResult(null);
+      setNormalizationError(e instanceof Error ? e.message : "Falha ao normalizar.");
     } finally {
       setIsRunning(false);
     }
