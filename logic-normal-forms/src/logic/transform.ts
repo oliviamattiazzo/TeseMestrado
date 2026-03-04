@@ -1,4 +1,4 @@
-import { Bin, Not, Var, type Expr, deepEqual } from "./ast";
+import { Bin, Not, type Expr, deepEqual } from "./ast";
 import { printExpr } from "./print";
 
 export type Step = {

@@ -5,17 +5,17 @@ import StepsPanel from "../components/StepsPanel";
 import type { NormalizeResponse, NormalForm, Step } from "../types/normalizer";
 import { normalize } from "../logic/normalize";
 
-const MOCK: NormalizeResponse = {
-  cnf: "(p ∨ q) ∧ (¬p ∨ r)",
-  dnf: "(p ∧ r) ∨ (q ∧ r)",
-  stepsToCnf: [
-    { index: 1, rule: "Eliminate →", before: "p → q", after: "¬p ∨ q", note: "Use A → B ≡ ¬A ∨ B." },
-    { index: 2, rule: "De Morgan", before: "¬(p ∧ q)", after: "¬p ∨ ¬q", note: "Negation distributes over ∧." },
-  ],
-  stepsToDnf: [
-    { index: 1, rule: "Distribute ∧ over ∨", before: "r ∧ (p ∨ q)", after: "(r ∧ p) ∨ (r ∧ q)" },
-  ],
-};
+// const MOCK: NormalizeResponse = {
+//   cnf: "(p ∨ q) ∧ (¬p ∨ r)",
+//   dnf: "(p ∧ r) ∨ (q ∧ r)",
+//   stepsToCnf: [
+//     { index: 1, rule: "Eliminate →", before: "p → q", after: "¬p ∨ q", note: "Use A → B ≡ ¬A ∨ B." },
+//     { index: 2, rule: "De Morgan", before: "¬(p ∧ q)", after: "¬p ∨ ¬q", note: "Negation distributes over ∧." },
+//   ],
+//   stepsToDnf: [
+//     { index: 1, rule: "Distribute ∧ over ∨", before: "r ∧ (p ∨ q)", after: "(r ∧ p) ∨ (r ∧ q)" },
+//   ],
+// };
 
 export default function HomePage() {
   const [expression, setExpression] = useState("");
