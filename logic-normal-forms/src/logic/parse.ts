@@ -1,5 +1,5 @@
 import { Bin, Not, Var, type Expr, type BinOp } from "./ast";
-import { tokenize, type Token, type TokType } from "./tokenize";
+import { tokenize, type TokType } from "./tokenize";
 
 type Prec = { prec: number; assoc: "left" | "right"; op: BinOp };
 
