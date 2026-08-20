@@ -165,7 +165,9 @@
 \chapter*{Lista de Abreviações e Acrónimos}
 % (estrutura sugerida; preenche depois)
 \begin{description}
-  \item[ABBR] Full term
+  \item[CNF] Conjunctive Normal Form (Forma Normal Conjuntiva)
+  \item[DPLL] Davis--Putnam--Logemann--Loveland (algoritmo)
+  \item[SAT] Boolean Satisfiability Problem (Problema de Satisfazibilidade Booleana)
 \end{description}
 \clearpage
 
@@ -204,6 +206,15 @@ Tradicionalmente, a história da lógica moderna é narrada como a história da 
 A lógica matemática de Boole foi inicialmente ignorada por muitos matemáticos e filósofos, devido à falta de tradição em lógica formal na Grã-Bretanha e à visão predominante na Alemanha de que a lógica formal já era um campo completo desde Aristóteles. No entanto, após sua morte em 1864, o trabalho de Boole começou a ganhar reconhecimento, especialmente por meio de William Stanley Jevons, que simplificou e popularizou o cálculo lógico de Boole, e Alexander Bain, que introduziu as contribuições de Boole em sua obra sobre lógica. A lógica matemática de Boole foi fundamental para o desenvolvimento da lógica simbólica como uma subdisciplina da matemática no início do século XX. Sua abordagem abriu caminho para aplicações em diversas áreas, como fundamentos da matemática, física, teoria das probabilidades e filosofia da ciência. \cite{Peckhaus_1999}
 
 \section{Desenvolvimento e importância na computação}
+
+Se a seção anterior situou o surgimento das formas normais no interior do próprio desenvolvimento da lógica simbólica, cabe agora examinar como esse aparato conceitual migrou da matemática pura para o domínio da computação, tornando-se um dos seus pilares operacionais. O ponto de inflexão costuma ser atribuído a Claude Shannon que, em sua dissertação de mestrado \textit{A Symbolic Analysis of Relay and Switching Circuits} (1938), demonstrou que a álgebra booleana desenvolvida por Boole podia servir de base para a análise e a síntese de circuitos de relés e comutação elétrica \cite{shannon1938}. Ao representar estados de circuito por meio de variáveis binárias e operações lógicas, Shannon evidenciou que problemas de engenharia elétrica podiam ser tratados como problemas puramente algébricos, e vice-versa: circuitos podiam ser projetados a partir da manipulação simbólica de expressões booleanas. Essa correspondência tornou as formas normais, sobretudo a conjuntiva e a disjuntiva, instrumentos naturais de trabalho, uma vez que qualquer função booleana pode ser expressa de modo sistemático como uma disjunção de conjunções (soma de produtos) ou como uma conjunção de disjunções (produto de somas), fornecendo assim um procedimento uniforme para simplificação e implementação de circuitos lógicos.
+
+A relevância computacional das formas normais se aprofunda ainda mais com o advento do raciocínio automatizado. Em 1960, Martin Davis e Hilary Putnam propuseram um procedimento para testar a satisfazibilidade de fórmulas da lógica de primeira ordem que tomava como entrada expressões já convertidas para a forma normal conjuntiva, tratando cada fórmula como uma conjunção de cláusulas disjuntivas de literais \cite{davisputnam1960}. O procedimento de Davis e Putnam, posteriormente refinado por Davis, Logemann e Loveland no algoritmo hoje conhecido como DPLL, consolidou a forma normal conjuntiva como o formato padrão de entrada para os problemas de satisfazibilidade booleana (SAT), estabelecendo um paradigma que permanece no núcleo dos solucionadores de SAT contemporâneos, empregados em verificação de hardware e software, planejamento automatizado e otimização combinatória.
+
+A adoção da forma normal conjuntiva como representação canônica não é arbitrária: ela decorre de propriedades estruturais que facilitam a aplicação de regras de inferência, como a resolução, de modo mecânico e sistemático. Uma fórmula em CNF permite que a verificação de sua satisfazibilidade seja reduzida à manipulação de conjuntos de cláusulas, o que se presta naturalmente à implementação em algoritmos de busca e retrocesso (\textit{backtracking}). Por outro lado, a forma normal disjuntiva, embora menos utilizada em provadores automáticos de teoremas por razões de eficiência computacional, permanece central em áreas como minimização de circuitos digitais, síntese lógica e sistemas de regras em inteligência artificial, nos quais a formulação de uma função como disjunção de termos conjuntivos corresponde diretamente à enumeração de condições suficientes para a verdade de uma proposição.
+
+Cabe ainda destacar que a conversão de uma fórmula arbitrária para forma normal, seja conjuntiva, seja disjuntiva, não é um processo computacionalmente trivial: no pior caso, o tamanho da fórmula resultante pode crescer exponencialmente em relação ao tamanho da fórmula original, o que impõe limites práticos à aplicação ingênua desses procedimentos em sistemas de larga escala. Essa tensão entre a elegância teórica das formas normais e o custo computacional de sua obtenção é um dos fios condutores que atravessam esta dissertação, e será retomada com maior profundidade no Capítulo 2, dedicado aos algoritmos de transformação e à sua análise de correção e complexidade.
+
 \section{Definições e propriedades: negativa, conjuntiva, disjuntiva e prenexa}
 \section{Completude funcional: bases de conectivos}
 \section{Limitações teóricas}
