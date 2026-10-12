@@ -18,6 +18,10 @@
 % (Opcional, mas comum em dissertações)
 \usepackage{amsmath,amssymb,amsthm}
 
+% Ambientes de teorema
+\theoremstyle{plain}
+\newtheorem{proposicao}{Proposição}[chapter]
+
 % -------------------------
 % Margens (ajusta se o template UAb pedir outras)
 % -------------------------
@@ -360,6 +364,77 @@ Por fim, cabe mencionar os métodos voltados não à obtenção de uma forma nor
 Os métodos revisados nesta seção — conversão para NNF, distributividade, Tseitin, Plaisted--Greenbaum, prenexação e Quine--McCluskey — serão retomados na Seção 2.2, na qual sua correção será formalmente demonstrada e sua complexidade computacional analisada com maior rigor.
 
 \section{Correção, equivalência lógica e complexidade computacional}
+
+A revisão conduzida na Seção 2.1 descreveu o que cada método faz; cabe agora estabelecer o que cada um deles garante e quanto custa garantir. Três propriedades orientam essa análise: a \textit{terminação}, isto é, a certeza de que o procedimento alcança uma fórmula na forma-alvo após um número finito de passos; a \textit{correção}, entendida como a relação semântica que a fórmula produzida mantém com a de entrada; e a \textit{complexidade}, medida tanto no tempo de execução quanto no tamanho da saída. No que diz respeito à correção, convém distinguir duas noções que a Seção 1.5 já havia contraposto: a \textbf{equivalência lógica}, segundo a qual duas fórmulas são verdadeiras sob exatamente as mesmas valorações, e a \textbf{equissatisfazibilidade}, segundo a qual uma é satisfazível se e somente se a outra o é. A primeira implica a segunda, mas não o contrário, e a diferença entre ambas é precisamente o que permite a certos métodos escapar do crescimento exponencial, como se verá adiante.
+ 
+Comecemos pela forma normal negativa, cujo procedimento convém formular de maneira recursiva, carregando-se consigo a \textit{polaridade} $\pi \in \{+,-\}$ da subfórmula corrente, isto é, se ela deve ser lida afirmada ($+$) ou negada ($-$). Escrevendo $\overline{\pi}$ para a polaridade oposta a $\pi$ e $p$ para uma variável proposicional, a função $\mathrm{nnf}$ é definida por
+\begin{align*}
+\mathrm{nnf}(p,+) &= p, \qquad \mathrm{nnf}(p,-) = \neg p,\\
+\mathrm{nnf}(\neg\varphi,\pi) &= \mathrm{nnf}(\varphi,\overline{\pi}),\\
+\mathrm{nnf}(\varphi\wedge\psi,+) &= \mathrm{nnf}(\varphi,+)\wedge\mathrm{nnf}(\psi,+),\\
+\mathrm{nnf}(\varphi\wedge\psi,-) &= \mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,-),\\
+\mathrm{nnf}(\varphi\vee\psi,+) &= \mathrm{nnf}(\varphi,+)\vee\mathrm{nnf}(\psi,+),\\
+\mathrm{nnf}(\varphi\vee\psi,-) &= \mathrm{nnf}(\varphi,-)\wedge\mathrm{nnf}(\psi,-),\\
+\mathrm{nnf}(\varphi\rightarrow\psi,+) &= \mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,+),\\
+\mathrm{nnf}(\varphi\rightarrow\psi,-) &= \mathrm{nnf}(\varphi,+)\wedge\mathrm{nnf}(\psi,-),\\
+\mathrm{nnf}(\varphi\leftrightarrow\psi,+) &= \bigl(\mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,+)\bigr)\wedge\bigl(\mathrm{nnf}(\psi,-)\vee\mathrm{nnf}(\varphi,+)\bigr),\\
+\mathrm{nnf}(\varphi\leftrightarrow\psi,-) &= \bigl(\mathrm{nnf}(\varphi,+)\wedge\mathrm{nnf}(\psi,-)\bigr)\vee\bigl(\mathrm{nnf}(\psi,+)\wedge\mathrm{nnf}(\varphi,-)\bigr).
+\end{align*}
+Essa formulação funde, em uma única passagem, as duas etapas descritas na Seção 2.1: a eliminação dos conectivos $\rightarrow$ e $\leftrightarrow$ e o deslocamento das negações até os literais.
+ 
+\begin{proposicao}[Correção da NNF]\label{prop:nnf}
+Para toda fórmula $\varphi$, $\mathrm{nnf}(\varphi,+)$ está em NNF e é logicamente equivalente a $\varphi$, e $\mathrm{nnf}(\varphi,-)$ está em NNF e é logicamente equivalente a $\neg\varphi$. Além disso, o cálculo termina e, se $\varphi$ não contém $\leftrightarrow$, seu custo, em tempo e em tamanho da saída, é linear em $|\varphi|$.
+\end{proposicao}
+\begin{proof}
+A prova é por indução estrutural em $\varphi$, simultaneamente para as duas polaridades. Que o resultado está em NNF decorre de a negação ser introduzida apenas diante de variáveis, e a terminação decorre de cada chamada recursiva incidir sobre uma subfórmula própria. Quanto à equivalência, o caso de variável é imediato. No caso $\neg\varphi$, a hipótese de indução dá $\mathrm{nnf}(\neg\varphi,+)=\mathrm{nnf}(\varphi,-)\equiv\neg\varphi$ e $\mathrm{nnf}(\neg\varphi,-)=\mathrm{nnf}(\varphi,+)\equiv\varphi\equiv\neg\neg\varphi$. Para a conjunção com polaridade negativa, $\mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,-)\equiv\neg\varphi\vee\neg\psi\equiv\neg(\varphi\wedge\psi)$ pela lei de De Morgan; para a implicação com polaridade positiva, $\mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,+)\equiv\neg\varphi\vee\psi\equiv\varphi\rightarrow\psi$, e com polaridade negativa, $\mathrm{nnf}(\varphi,+)\wedge\mathrm{nnf}(\psi,-)\equiv\varphi\wedge\neg\psi\equiv\neg(\varphi\rightarrow\psi)$. Os demais casos são análogos. Por fim, na ausência de $\leftrightarrow$, cada subfórmula de $\varphi$ recebe exatamente uma chamada, de modo que o número de chamadas, e portanto o tamanho da saída, é linear em $|\varphi|$.
+\end{proof}
+ 
+A ressalva quanto ao bicondicional não é meramente técnica. Na regra de $\leftrightarrow$, cada operando é percorrido, e copiado, duas vezes, uma em cada polaridade; em uma fórmula com bicondicionais aninhados em profundidade $k$, o tamanho da saída ao menos dobra a cada nível de aninhamento, atingindo a ordem de $2^k$. A correção do método estrutural é, portanto, incondicional, ao passo que sua eficiência não o é. Essa duplicação de operandos reaparecerá adiante como motivação para o tratamento direto de equivalências nos métodos de Tseitin e de Plaisted--Greenbaum.
+ 
+Passemos à obtenção da CNF a partir da NNF por distributividade. Sua correção repousa sobre a equivalência $(\alpha\wedge\beta)\vee\gamma\equiv(\alpha\vee\gamma)\wedge(\beta\vee\gamma)$ e sobre a substituição de subfórmulas por equivalentes. Na formulação recursiva, $\mathrm{cnf}(\alpha\wedge\beta)=\mathrm{cnf}(\alpha)\wedge\mathrm{cnf}(\beta)$ e $\mathrm{cnf}(\alpha\vee\beta)=\mathrm{cnf}(\alpha)\otimes\mathrm{cnf}(\beta)$, em que $\otimes$ denota o conjunto das disjunções de uma cláusula do primeiro argumento com uma cláusula do segundo; a terminação é imediata e a equivalência segue por indução estrutural. É o produto $\otimes$ que explica o custo: se $\mathrm{cnf}(\alpha)$ tem $m$ cláusulas e $\mathrm{cnf}(\beta)$ tem $k$, o resultado tem $m\cdot k$. Aplicado à fórmula $\varphi_n=(a_1\wedge b_1)\vee\cdots\vee(a_n\wedge b_n)$, de tamanho $O(n)$, cada termo $a_i\wedge b_i$ contribui com duas cláusulas unitárias, e os $n-1$ produtos sucessivos resultam em $2^n$ cláusulas. A proposição a seguir mostra que esse crescimento não é um artefato do método.
+ 
+\begin{proposicao}[Limite inferior para a CNF]\label{prop:limite-cnf}
+Para todo $n\geq 1$, toda CNF equivalente a $\varphi_n=(a_1\wedge b_1)\vee\cdots\vee(a_n\wedge b_n)$ possui ao menos $2^n$ cláusulas.
+\end{proposicao}
+\begin{proof}
+Seja $\Gamma$ uma CNF equivalente a $\varphi_n$, da qual se descartaram previamente as cláusulas tautológicas. A fórmula $\varphi_n$ é monótona: se uma valoração a satisfaz, qualquer valoração que torne verdadeiras ao menos as mesmas variáveis também a satisfaz. Consequentemente, se uma cláusula $C\vee\neg x$, com $x$ não ocorrendo em $C$, é implicada por $\varphi_n$, então $C$ também o é: dada $v\models\varphi_n$, a valoração $v'$, que difere de $v$ apenas por tornar $x$ verdadeira, também satisfaz $\varphi_n$, logo satisfaz $C\vee\neg x$ e, como $\neg x$ é falso em $v'$, satisfaz $C$; como $x$ não ocorre em $C$, $v$ também satisfaz $C$. Removendo, um a um, os literais negativos das cláusulas de $\Gamma$, obtém-se uma CNF positiva $\Gamma'$, com no máximo $|\Gamma|$ cláusulas, equivalente a $\varphi_n$: cada cláusula de $\Gamma'$ é implicada por $\varphi_n$, e $\Gamma'$ implica $\Gamma$, pois cada uma de suas cláusulas é subcláusula de uma cláusula de $\Gamma$.
+ 
+Para cada $s\in\{0,1\}^n$, seja $C_s$ a cláusula positiva que contém, para cada $i$, a variável $a_i$ se $s_i=0$ e $b_i$ se $s_i=1$, e seja $v_s$ a valoração que atribui falso às variáveis de $C_s$ e verdadeiro às demais. Em $v_s$, exatamente uma entre $a_i$ e $b_i$ é verdadeira, para cada $i$; logo nenhum termo $a_i\wedge b_i$ é verdadeiro e $v_s\not\models\varphi_n$. Assim, alguma cláusula $D$ de $\Gamma'$ é falsa em $v_s$ e, sendo positiva, todas as suas variáveis pertencem a $C_s$. Por outro lado, $D$ é implicada por $\varphi_n$, e a valoração que torna verdadeiras apenas $a_i$ e $b_i$ satisfaz $\varphi_n$; logo $D$ contém $a_i$ ou $b_i$, para cada $i$. Conclui-se que $D=C_s$. Como os $2^n$ valores de $s$ produzem cláusulas $C_s$ distintas, $|\Gamma|\geq|\Gamma'|\geq 2^n$.
+\end{proof}
+ 
+Por dualidade, a fórmula $(a_1\vee b_1)\wedge\cdots\wedge(a_n\vee b_n)$ exige ao menos $2^n$ termos em qualquer DNF equivalente. O resultado tem uma consequência direta: nenhum algoritmo que preserve a equivalência lógica e produza uma CNF (ou uma DNF) pode ter tamanho de saída polinomial no caso geral. O custo exponencial da distributividade é, assim, uma propriedade da exigência de equivalência, e não uma deficiência do método.
+ 
+É exatamente essa exigência que o método de Tseitin abandona. Para fixar a notação, consideremos $\varphi$ em NNF, construída com $\wedge$ e $\vee$ binários sobre literais. A cada ocorrência $\psi$ de subfórmula não literal associa-se uma variável nova $x_\psi$, e escreve-se $[\psi]$ para o literal que representa $\psi$: $[\psi]=\psi$ se $\psi$ é um literal, e $[\psi]=x_\psi$ caso contrário. Denotando por $\overline{\ell}$ o literal complementar de $\ell$, o conjunto de cláusulas associado a uma ocorrência $\psi=\psi_1\wedge\psi_2$ é
+\[
+G_\psi=\bigl\{\,\neg x_\psi\vee[\psi_1],\;\; \neg x_\psi\vee[\psi_2],\;\; x_\psi\vee\overline{[\psi_1]}\vee\overline{[\psi_2]}\,\bigr\},
+\]
+e o de uma ocorrência $\psi=\psi_1\vee\psi_2$ é
+\[
+G_\psi=\bigl\{\,\neg x_\psi\vee[\psi_1]\vee[\psi_2],\;\; x_\psi\vee\overline{[\psi_1]},\;\; x_\psi\vee\overline{[\psi_2]}\,\bigr\}.
+\]
+Em ambos os casos, $G_\psi$ é a CNF da bi-implicação que define $x_\psi$ em função de seus operandos, isto é, de $x_\psi\leftrightarrow([\psi_1]\wedge[\psi_2])$ e de $x_\psi\leftrightarrow([\psi_1]\vee[\psi_2])$, respectivamente. A transformação é $T(\varphi)=x_\varphi\wedge\bigwedge_\psi G_\psi$, com a convenção de que $T(\varphi)=\varphi$ quando $\varphi$ é um literal \cite{tseitin1968}.
+ 
+\begin{proposicao}[Correção da transformação de Tseitin]\label{prop:tseitin}
+Seja $\varphi$ uma fórmula em NNF, com conectivos binários, sobre o conjunto de variáveis $V$, e seja $X$ o conjunto das variáveis auxiliares de $T(\varphi)$. Então: (i) $T(\varphi)$ está em CNF e possui no máximo $3c+1$ cláusulas, em que $c$ é o número de ocorrências de conectivos em $\varphi$, de modo que seu tamanho e seu tempo de construção são lineares em $|\varphi|$; (ii) toda valoração de $V$ que satisfaz $\varphi$ admite uma única extensão a $V\cup X$ que satisfaz $T(\varphi)$; (iii) toda valoração de $V\cup X$ que satisfaz $T(\varphi)$ satisfaz $\varphi$. Consequentemente, $\varphi$ e $T(\varphi)$ são equissatisfazíveis e têm o mesmo número de modelos (contados sobre $V$ e sobre $V\cup X$, respectivamente); além disso, $T(\varphi)\models\varphi$, mas em geral $\varphi\not\models T(\varphi)$.
+\end{proposicao}
+\begin{proof}
+(i) Cada ocorrência de conectivo gera três cláusulas com no máximo três literais cada, às quais se acrescenta a cláusula unitária $x_\varphi$. Para (ii) e (iii), a peça central é o seguinte lema: se $J$ satisfaz todas as cláusulas $G_\psi$, então $J(x_\psi)=J(\psi)$ para toda ocorrência não literal $\psi$. A prova é por indução estrutural em $\psi$. Se $\psi=\psi_1\wedge\psi_2$, a satisfação de $G_\psi$ equivale a $J(x_\psi)=J([\psi_1])\wedge J([\psi_2])$, e $J([\psi_i])=J(\psi_i)$, pela hipótese de indução quando $\psi_i$ não é literal e trivialmente quando o é; logo $J(x_\psi)=J(\psi)$. O caso da disjunção é análogo.
+ 
+(ii) Dada $I\models\varphi$, defina-se $I'$ por $I'(x_\psi)=I(\psi)$. Cada bi-implicação vale por construção e $I'(x_\varphi)=I(\varphi)=1$, de modo que $I'\models T(\varphi)$. A unicidade segue do lema, que determina o valor de cada $x_\psi$.
+ 
+(iii) Se $J$ satisfaz $T(\varphi)$, então $J(x_\varphi)=1$ e, pelo lema, $J(\varphi)=J(x_\varphi)=1$.
+ 
+Por fim, (ii) e (iii) fornecem a equissatisfazibilidade e, por estabelecerem uma correspondência biunívoca entre os modelos, a igualdade de suas quantidades; (iii) é a implicação $T(\varphi)\models\varphi$. Para a recíproca, tome-se $\varphi=p\wedge q$: então $T(\varphi)=x\wedge(\neg x\vee p)\wedge(\neg x\vee q)\wedge(x\vee\neg p\vee\neg q)$, e a valoração $p=q=1$, $x=0$ satisfaz $\varphi$, mas não $T(\varphi)$.
+\end{proof}
+ 
+A construção estende-se a fórmulas arbitrárias tratando cada ocorrência de conectivo como uma porta com um número constante de cláusulas, inclusive para o bicondicional, que requer quatro. Esse tratamento direto evita a duplicação de operandos que torna a conversão para NNF exponencial em presença de bicondicionais aninhados. O refinamento de Plaisted e Greenbaum \cite{plaisted1986} explora, por sua vez, o fato de que, em uma fórmula em NNF, toda ocorrência não literal tem polaridade positiva: basta, então, codificar a direção $x_\psi\rightarrow([\psi_1]\wedge[\psi_2])$, ou $x_\psi\rightarrow([\psi_1]\vee[\psi_2])$, de modo que cada porta gera duas cláusulas, no caso da conjunção, ou uma, no da disjunção, em vez de três. A prova de correção segue a da Proposição~\ref{prop:tseitin} com o lema enfraquecido para $J(x_\psi)=1\Rightarrow J(\psi)=1$, o que basta para (iii); a extensão de (ii) continua a existir, mas deixa de ser única. A equissatisfazibilidade é, assim, preservada, ao passo que o número de modelos, em geral, não o é.
+ 
+No caso da forma normal prenexa, a correção apoia-se em duas famílias de equivalências: as regras de deslocamento de quantificadores, que só são equivalências sob a condição lateral de que a variável quantificada não ocorra livre na outra componente — por exemplo, $\psi\wedge\forall x\,\varphi\equiv\forall x\,(\psi\wedge\varphi)$ se $x\notin\mathrm{FV}(\psi)$, em que $\mathrm{FV}(\psi)$ denota o conjunto das variáveis que ocorrem livres em $\psi$ —, e a renomeação de variáveis ligadas ($\alpha$-conversão), que, aplicada previamente, permite satisfazer sempre essa condição. Como cada aplicação desloca um quantificador exatamente uma posição para fora e nenhuma regra o desloca para dentro, o procedimento termina após no máximo $q\cdot d$ deslocamentos, em que $q$ é o número de quantificadores e $d$ a profundidade da fórmula. O custo é, assim, polinomial, e o tamanho da fórmula não cresce, com a mesma ressalva, relativa ao bicondicional, que se fez para a NNF. A skolemização, que frequentemente se segue à prenexação, preserva apenas a equissatisfazibilidade (Seção 1.5), situando-se, nesse aspecto, do mesmo lado da fronteira que a transformação de Tseitin.
+ 
+Resta o método de Quine--McCluskey. Sua correção decorre do resultado de Quine segundo o qual alguma soma de produtos mínima é formada apenas por implicantes primos \cite{quine1952,mccluskey1956}. Quanto ao custo, convém distinguir as duas fases do método. A geração dos implicantes primos produz, para $n$ variáveis, uma quantidade de implicantes limitada por uma função da ordem de $3^n/\sqrt{n}$, limite quase justo, pois existem funções com implicantes primos da ordem de $3^n/n$ \cite{chandra1978}. Como a tabela-verdade tem $N=2^n$ linhas e $3^n=N^{\log_2 3}$, esse número é polinomial em $N$, embora exponencial em $n$. A dificuldade essencial reside na segunda fase, a seleção, entre os implicantes primos, de uma cobertura de tamanho mínimo, problema do tipo cobertura de conjuntos: minimizar uma DNF dada a tabela-verdade é NP-completo, resultado atribuído a Masek, nunca publicado, e reapresentado com uma demonstração mais simples por Allender et al. \cite{allender2006}.
+ 
+Em síntese, os resultados desta seção delimitam, para cada método, o que se obtém e a que preço. A conversão para NNF e para PNF preserva a equivalência a custo polinomial, linear quando não há bicondicionais; a distributividade preserva a equivalência, mas está sujeita ao limite inferior exponencial da Proposição~\ref{prop:limite-cnf}; as transformações de Tseitin e de Plaisted--Greenbaum atingem tamanho linear ao custo de trocar a equivalência pela equissatisfazibilidade; e a obtenção de formas mínimas esbarra na NP-completude da seleção de cobertura. Esse quadro de compromissos condiciona o que uma implementação pode oferecer a um estudante, em particular se a ferramenta deve exibir apenas transformações que preservam a equivalência, que se acompanham passo a passo com mais facilidade, ou também transformações equissatisfazíveis, mais eficientes, porém menos transparentes do ponto de vista didático. Essa escolha de projeto será retomada na Seção 2.3 e no Capítulo 3.
+
 \section{Considerações sobre implementação computacional}
 
 % =========================================================
