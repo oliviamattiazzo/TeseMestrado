@@ -21,6 +21,23 @@
 % Ambientes de teorema
 \theoremstyle{plain}
 \newtheorem{proposicao}{Proposição}[chapter]
+\allowdisplaybreaks
+
+% Algoritmos em pseudocódigo (Apêndice II)
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Lista de Algoritmos}
+\algrenewcommand\algorithmicrequire{\textbf{Entrada:}}
+\algrenewcommand\algorithmicensure{\textbf{Saída:}}
+\algrenewcommand\algorithmicif{\textbf{se}}
+\algrenewcommand\algorithmicthen{\textbf{então}}
+\algrenewcommand\algorithmicelse{\textbf{senão}}
+\algrenewcommand\algorithmicfunction{\textbf{função}}
+\algrenewcommand\algorithmicreturn{\textbf{devolver}}
+\algrenewtext{ElsIf}[1]{\algorithmicelse\ \algorithmicif\ #1\ \algorithmicthen}
+\algrenewtext{EndIf}{\textbf{fim se}}
+\algrenewtext{EndFunction}{\textbf{fim função}}
 
 % -------------------------
 % Margens (ajusta se o template UAb pedir outras)
@@ -204,8 +221,8 @@ Como desdobramento dos objetivos gerais, esta dissertação tem como objetivo es
 % =========================================================
 % CHAPTER 1 : Contexto histórico e fundamentos teóricos
 % =========================================================
-\chapter{Contexto Histórico e Fundamentos Teóricos}
-\section{Origens das formas normais na lógica}
+\chapter{Contexto Histórico e Fundamentos Teóricos}\label{cap:fundamentos}
+\section{Origens das formas normais na lógica}\label{sec:origens}
 
 Nos finais do século XIX e início do século XX, a matemática começou a passar por uma transformação significativa, com ênfase crescente na rigorosidade e no método axiomático, estabelecendo as bases para a lógica matemática moderna. A chamada Lógica Simbólica Moderna foi desenvolvida, em parte, como uma maneira de prover uma estrutura formal para a manipulação de ideias e argumentos matemáticos. Depois de alguns avanços, também ganhou o objetivo de reduzir expressões lógicas a padrões mais simples que preservassem a equivalência lógica das demonstrações formais. A lógica também influenciou a ciência da computação, especialmente em áreas como raciocínio automatizado, verificação de programas e sistemas, e sistemas de tipos para linguagens de programação. Exemplos incluem o uso de álgebra booleana em circuitos de comutação, algoritmos para prova automática de teoremas e o desenvolvimento de linguagens de programação tipadas. \cite{Zach2024Logic}
 
@@ -213,7 +230,7 @@ Tradicionalmente, a história da lógica moderna é narrada como a história da 
 
 A lógica matemática de Boole foi inicialmente ignorada por muitos matemáticos e filósofos, devido à falta de tradição em lógica formal na Grã-Bretanha e à visão predominante na Alemanha de que a lógica formal já era um campo completo desde Aristóteles. No entanto, após sua morte em 1864, o trabalho de Boole começou a ganhar reconhecimento, especialmente por meio de William Stanley Jevons, que simplificou e popularizou o cálculo lógico de Boole, e Alexander Bain, que introduziu as contribuições de Boole em sua obra sobre lógica. A lógica matemática de Boole foi fundamental para o desenvolvimento da lógica simbólica como uma subdisciplina da matemática no início do século XX. Sua abordagem abriu caminho para aplicações em diversas áreas, como fundamentos da matemática, física, teoria das probabilidades e filosofia da ciência. \cite{Peckhaus_1999}
 
-\section{Desenvolvimento e importância na computação}
+\section{Desenvolvimento e importância na computação}\label{sec:computacao}
 
 Se a seção anterior situou o surgimento das formas normais no interior do próprio desenvolvimento da lógica simbólica, cabe agora examinar como esse aparato conceitual migrou da matemática pura para o domínio da computação, tornando-se um dos seus pilares operacionais. O ponto de inflexão costuma ser atribuído a Claude Shannon que, em sua dissertação de mestrado \textit{A Symbolic Analysis of Relay and Switching Circuits} (1938), demonstrou que a álgebra booleana desenvolvida por Boole podia servir de base para a análise e a síntese de circuitos de relés e comutação elétrica \cite{shannon1938}. Ao representar estados de circuito por meio de variáveis binárias e operações lógicas, Shannon evidenciou que problemas de engenharia elétrica podiam ser tratados como problemas puramente algébricos, e vice-versa: circuitos podiam ser projetados a partir da manipulação simbólica de expressões booleanas. Essa correspondência tornou as formas normais, sobretudo a conjuntiva e a disjuntiva, instrumentos naturais de trabalho, uma vez que qualquer função booleana pode ser expressa de modo sistemático como uma disjunção de conjunções (soma de produtos) ou como uma conjunção de disjunções (produto de somas), fornecendo assim um procedimento uniforme para simplificação e implementação de circuitos lógicos.
 
@@ -221,25 +238,25 @@ A relevância computacional das formas normais se aprofunda ainda mais com o adv
 
 A adoção da forma normal conjuntiva como representação canônica não é arbitrária: ela decorre de propriedades estruturais que facilitam a aplicação de regras de inferência, como a resolução, de modo mecânico e sistemático. Uma fórmula em CNF permite que a verificação de sua satisfazibilidade seja reduzida à manipulação de conjuntos de cláusulas, o que se presta naturalmente à implementação em algoritmos de busca e retrocesso (\textit{backtracking}). Por outro lado, a forma normal disjuntiva, embora menos utilizada em provadores automáticos de teoremas por razões de eficiência computacional, permanece central em áreas como minimização de circuitos digitais, síntese lógica e sistemas de regras em inteligência artificial, nos quais a formulação de uma função como disjunção de termos conjuntivos corresponde diretamente à enumeração de condições suficientes para a verdade de uma proposição.
 
-Cabe ainda destacar que a conversão de uma fórmula arbitrária para forma normal, seja conjuntiva, seja disjuntiva, não é um processo computacionalmente trivial: no pior caso, o tamanho da fórmula resultante pode crescer exponencialmente em relação ao tamanho da fórmula original, o que impõe limites práticos à aplicação ingênua desses procedimentos em sistemas de larga escala. Essa tensão entre a elegância teórica das formas normais e o custo computacional de sua obtenção é um dos fios condutores que atravessam esta dissertação, e será retomada com maior profundidade no Capítulo 2, dedicado aos algoritmos de transformação e à sua análise de correção e complexidade.
+Cabe ainda destacar que a conversão de uma fórmula arbitrária para forma normal, seja conjuntiva, seja disjuntiva, não é um processo computacionalmente trivial: no pior caso, o tamanho da fórmula resultante pode crescer exponencialmente em relação ao tamanho da fórmula original, o que impõe limites práticos à aplicação ingênua desses procedimentos em sistemas de larga escala. Essa tensão entre a elegância teórica das formas normais e o custo computacional de sua obtenção é um dos fios condutores que atravessam esta dissertação, e será retomada com maior profundidade no Capítulo~\ref{cap:algoritmos}, dedicado aos algoritmos de transformação e à sua análise de correção e complexidade.
 
-\section{Definições e propriedades: negativa, conjuntiva, disjuntiva e prenexa}
+\section{Definições e propriedades: negativa, conjuntiva, disjuntiva e prenexa}\label{sec:definicoes}
 
-Antes de avançar para os algoritmos de conversão propriamente ditos, no Capítulo 2, é necessário fixar com precisão o que se entende por uma \textit{forma normal} e apresentar as quatro formas que estruturam esta dissertação: a forma normal negativa, a forma normal conjuntiva, a forma normal disjuntiva e a forma normal prenexa. Em termos gerais, uma forma normal é uma representação canônica de uma fórmula lógica que obedece a restrições sintáticas específicas quanto à disposição dos conectivos e, no caso da lógica de primeira ordem, dos quantificadores, preservando a equivalência lógica com a fórmula original \cite{walicki2011}. Cada uma das quatro formas a seguir impõe um conjunto distinto dessas restrições, e é justamente essa diversidade de critérios que torna necessário tratá-las separadamente antes de discutir, na Seção 1.4, a completude funcional das bases de conectivos que as sustentam.
+Antes de avançar para os algoritmos de conversão propriamente ditos, no Capítulo~\ref{cap:algoritmos}, é necessário fixar com precisão o que se entende por uma \textit{forma normal} e apresentar as quatro formas que estruturam esta dissertação: a forma normal negativa, a forma normal conjuntiva, a forma normal disjuntiva e a forma normal prenexa. Em termos gerais, uma forma normal é uma representação canônica de uma fórmula lógica que obedece a restrições sintáticas específicas quanto à disposição dos conectivos e, no caso da lógica de primeira ordem, dos quantificadores, preservando a equivalência lógica com a fórmula original \cite{walicki2011}. Cada uma das quatro formas a seguir impõe um conjunto distinto dessas restrições, e é justamente essa diversidade de critérios que torna necessário tratá-las separadamente antes de discutir, na Seção~\ref{sec:completude}, a completude funcional das bases de conectivos que as sustentam.
  
 A \textbf{forma normal negativa} (\textit{Negation Normal Form}, NNF) constitui o primeiro passo desse processo de normalização. Uma fórmula está em NNF quando os únicos conectivos presentes são a conjunção, a disjunção e a negação, e esta última incide exclusivamente sobre fórmulas atômicas, isto é, quando toda subfórmula negada é um literal \cite{walicki2011}. A obtenção da NNF a partir de uma fórmula arbitrária passa por dois procedimentos sistemáticos: primeiro, a eliminação dos conectivos de implicação e de bicondicional, reescritos em termos de conjunção, disjunção e negação; segundo, o deslocamento das negações para o interior da fórmula por meio das leis de De Morgan e da eliminação da dupla negação, até que restem apenas negações de literais. Todo formula da lógica proposicional clássica admite uma NNF equivalente, e essa equivalência é o que garante que os passos seguintes de normalização — a saber, a obtenção das formas conjuntiva e disjuntiva — possam partir de uma base sintaticamente controlada, sem alterar o significado da fórmula original.
  
-A partir de uma fórmula em NNF, aplicam-se as leis distributivas da conjunção sobre a disjunção (ou vice-versa) para se obter as formas conjuntiva e disjuntiva. A \textbf{forma normal conjuntiva} (\textit{Conjunctive Normal Form}, CNF) é definida como uma conjunção de cláusulas, em que cada cláusula é, por sua vez, uma disjunção de literais: $\varphi = C_1 \wedge C_2 \wedge \cdots \wedge C_n$, onde cada $C_i = l_1 \vee l_2 \vee \cdots \vee l_k$ e cada $l_j$ é uma variável proposicional ou sua negação. Simetricamente, a \textbf{forma normal disjuntiva} (\textit{Disjunctive Normal Form}, DNF) é definida como uma disjunção de termos, em que cada termo é uma conjunção de literais: $\varphi = D_1 \vee D_2 \vee \cdots \vee D_n$, onde cada $D_i = l_1 \wedge l_2 \wedge \cdots \wedge l_k$. Ambas as formas guardam uma relação de dualidade entre si: a negação de uma fórmula em CNF, reescrita em NNF, resulta em uma fórmula em DNF, e vice-versa. Todo formula da lógica proposicional admite uma CNF e uma DNF equivalentes, o que pode ser demonstrado tanto por indução sobre a estrutura da fórmula a partir da sua NNF quanto de forma construtiva a partir de sua tabela-verdade, tomando a disjunção das conjunções correspondentes às linhas em que a fórmula é verdadeira (para a DNF) ou a conjunção das disjunções correspondentes às linhas em que é falsa (para a CNF) \cite{chang1973}. É importante notar, no entanto, que nem a CNF nem a DNF de uma fórmula são únicas: diferentes sequências de aplicação das leis distributivas e comutativas podem produzir formas conjuntivas ou disjuntivas distintas, ainda que logicamente equivalentes entre si, o que tem implicações diretas para a complexidade computacional discutida na Seção 1.2 e retomada no Capítulo 2.
+A partir de uma fórmula em NNF, aplicam-se as leis distributivas da conjunção sobre a disjunção (ou vice-versa) para se obter as formas conjuntiva e disjuntiva. A \textbf{forma normal conjuntiva} (\textit{Conjunctive Normal Form}, CNF) é definida como uma conjunção de cláusulas, em que cada cláusula é, por sua vez, uma disjunção de literais: $\varphi = C_1 \wedge C_2 \wedge \cdots \wedge C_n$, onde cada $C_i = l_1 \vee l_2 \vee \cdots \vee l_k$ e cada $l_j$ é uma variável proposicional ou sua negação. Simetricamente, a \textbf{forma normal disjuntiva} (\textit{Disjunctive Normal Form}, DNF) é definida como uma disjunção de termos, em que cada termo é uma conjunção de literais: $\varphi = D_1 \vee D_2 \vee \cdots \vee D_n$, onde cada $D_i = l_1 \wedge l_2 \wedge \cdots \wedge l_k$. Ambas as formas guardam uma relação de dualidade entre si: a negação de uma fórmula em CNF, reescrita em NNF, resulta em uma fórmula em DNF, e vice-versa. Todo formula da lógica proposicional admite uma CNF e uma DNF equivalentes, o que pode ser demonstrado tanto por indução sobre a estrutura da fórmula a partir da sua NNF quanto de forma construtiva a partir de sua tabela-verdade, tomando a disjunção das conjunções correspondentes às linhas em que a fórmula é verdadeira (para a DNF) ou a conjunção das disjunções correspondentes às linhas em que é falsa (para a CNF) \cite{chang1973}. É importante notar, no entanto, que nem a CNF nem a DNF de uma fórmula são únicas: diferentes sequências de aplicação das leis distributivas e comutativas podem produzir formas conjuntivas ou disjuntivas distintas, ainda que logicamente equivalentes entre si, o que tem implicações diretas para a complexidade computacional discutida na Seção~\ref{sec:computacao} e retomada no Capítulo~\ref{cap:algoritmos}.
  
-Por fim, a \textbf{forma normal prenexa} (\textit{Prenex Normal Form}, PNF) distingue-se das três anteriores por pertencer ao domínio da lógica de primeira ordem, na qual a presença de quantificadores universais e existenciais exige um tratamento sintático adicional. Uma fórmula está em PNF quando assume a forma $Q_1x_1 \, Q_2x_2 \cdots Q_nx_n \, M$, em que cada $Q_i$ é um quantificador ($\forall$ ou $\exists$) e $M$, chamada de matriz da fórmula, não contém quantificadores. A ideia de reunir todos os quantificadores num prefixo antecedendo uma matriz livre de quantificadores remonta ao trabalho de Charles Sanders Peirce, que em 1885, no artigo \textit{On the Algebra of Logic: A Contribution to the Philosophy of Notation}, introduziu regras para deslocar os quantificadores para a esquerda da fórmula, antecipando o que viria a ser sistematizado como forma normal prenexa \cite{peirce1885}. Assim como ocorre com a NNF, a CNF e a DNF, todo fórmula de primeira ordem é logicamente equivalente a uma fórmula em PNF, obtida por meio de regras de equivalência que permitem mover cada quantificador para fora do escopo dos conectivos proposicionais, com o cuidado de renomear variáveis ligadas sempre que necessário para evitar capturas indevidas. Uma vez em PNF, a matriz $M$ pode ainda ser colocada em CNF ou em DNF, resultando nas chamadas formas normais prenexa conjuntiva e prenexa disjuntiva, respectivamente — uma combinação particularmente relevante para os procedimentos de prova automática de teoremas mencionados na Seção 1.2, uma vez que isola, de um lado, a estrutura quantificacional da fórmula e, de outro, sua estrutura proposicional.
+Por fim, a \textbf{forma normal prenexa} (\textit{Prenex Normal Form}, PNF) distingue-se das três anteriores por pertencer ao domínio da lógica de primeira ordem, na qual a presença de quantificadores universais e existenciais exige um tratamento sintático adicional. Uma fórmula está em PNF quando assume a forma $Q_1x_1 \, Q_2x_2 \cdots Q_nx_n \, M$, em que cada $Q_i$ é um quantificador ($\forall$ ou $\exists$) e $M$, chamada de matriz da fórmula, não contém quantificadores. A ideia de reunir todos os quantificadores num prefixo antecedendo uma matriz livre de quantificadores remonta ao trabalho de Charles Sanders Peirce, que em 1885, no artigo \textit{On the Algebra of Logic: A Contribution to the Philosophy of Notation}, introduziu regras para deslocar os quantificadores para a esquerda da fórmula, antecipando o que viria a ser sistematizado como forma normal prenexa \cite{peirce1885}. Assim como ocorre com a NNF, a CNF e a DNF, todo fórmula de primeira ordem é logicamente equivalente a uma fórmula em PNF, obtida por meio de regras de equivalência que permitem mover cada quantificador para fora do escopo dos conectivos proposicionais, com o cuidado de renomear variáveis ligadas sempre que necessário para evitar capturas indevidas. Uma vez em PNF, a matriz $M$ pode ainda ser colocada em CNF ou em DNF, resultando nas chamadas formas normais prenexa conjuntiva e prenexa disjuntiva, respectivamente — uma combinação particularmente relevante para os procedimentos de prova automática de teoremas mencionados na Seção~\ref{sec:computacao}, uma vez que isola, de um lado, a estrutura quantificacional da fórmula e, de outro, sua estrutura proposicional.
  
-Em conjunto, essas quatro formas normais evidenciam um traço comum: todas preservam a equivalência lógica da fórmula original, mas nenhuma delas é única, e a transformação de uma fórmula arbitrária em qualquer uma delas pode acarretar um custo computacional não trivial, como já apontado na Seção 1.2. Essa tensão entre canonicidade sintática, de um lado, e eficiência de obtenção, de outro, é o que motiva a discussão da Seção 1.4, dedicada à completude funcional das bases de conectivos que tornam essas formas possíveis, e será retomada de maneira mais técnica no Capítulo 2, no qual os algoritmos de conversão e sua complexidade computacional são analisados em detalhe.
+Em conjunto, essas quatro formas normais evidenciam um traço comum: todas preservam a equivalência lógica da fórmula original, mas nenhuma delas é única, e a transformação de uma fórmula arbitrária em qualquer uma delas pode acarretar um custo computacional não trivial, como já apontado na Seção~\ref{sec:computacao}. Essa tensão entre canonicidade sintática, de um lado, e eficiência de obtenção, de outro, é o que motiva a discussão da Seção~\ref{sec:completude}, dedicada à completude funcional das bases de conectivos que tornam essas formas possíveis, e será retomada de maneira mais técnica no Capítulo~\ref{cap:algoritmos}, no qual os algoritmos de conversão e sua complexidade computacional são analisados em detalhe.
 
 A Tabela \ref{tab:formas-normais} sintetiza as quatro formas normais apresentadas nesta seção, contrastando o domínio lógico em que cada uma se aplica, a restrição sintática que a define e um exemplo típico de fórmula que a satisfaz.
 
 \begin{table}[htbp]
 \centering
-\caption{Comparação das quatro formas normais discutidas na Seção 1.3}
+\caption{Comparação das quatro formas normais discutidas na Seção~\ref{sec:definicoes}}
 \label{tab:formas-normais}
 \begin{tabular}{@{}p{2.6cm}p{1.2cm}p{2.4cm}p{4.2cm}p{3.6cm}@{}}
 \toprule
@@ -256,19 +273,19 @@ Forma Normal Prenexa & PNF & Lógica de primeira ordem & Todos os quantificadore
 \end{tabular}
 \end{table}
 
-\section{Completude funcional: bases de conectivos}
+\section{Completude funcional: bases de conectivos}\label{sec:completude}
 
-As definições e os teoremas de existência apresentados na Seção 1.3 repousam, ainda que implicitamente, sobre uma pressuposição que convém agora explicitar: a de que os conectivos escolhidos — conjunção, disjunção e negação — são suficientes para expressar qualquer função booleana, e portanto qualquer fórmula da lógica proposicional. Essa suficiência não é uma propriedade trivial nem exclusiva desse conjunto particular de conectivos; trata-se de uma propriedade metateórica conhecida como \textbf{completude funcional}, e sua investigação é o que permite compreender por que certas bases de conectivos servem de fundamento para as formas normais, enquanto outras não.
+As definições e os teoremas de existência apresentados na Seção~\ref{sec:definicoes} repousam, ainda que implicitamente, sobre uma pressuposição que convém agora explicitar: a de que os conectivos escolhidos — conjunção, disjunção e negação — são suficientes para expressar qualquer função booleana, e portanto qualquer fórmula da lógica proposicional. Essa suficiência não é uma propriedade trivial nem exclusiva desse conjunto particular de conectivos; trata-se de uma propriedade metateórica conhecida como \textbf{completude funcional}, e sua investigação é o que permite compreender por que certas bases de conectivos servem de fundamento para as formas normais, enquanto outras não.
  
-Formalmente, um conjunto de conectivos $\mathcal{B}$ é dito funcionalmente completo quando toda função booleana $f : \{0,1\}^n \rightarrow \{0,1\}$, para qualquer $n$, pode ser expressa por uma fórmula construída exclusivamente a partir dos conectivos de $\mathcal{B}$ e de variáveis proposicionais. O conjunto $\{\wedge, \vee, \neg\}$, empregado nas definições de NNF, CNF e DNF na seção anterior, é funcionalmente completo, mas é também redundante: por força das leis de De Morgan, a disjunção pode ser definida a partir da conjunção e da negação (ou vice-versa), de modo que já os conjuntos $\{\wedge, \neg\}$ e $\{\vee, \neg\}$ bastam para expressar qualquer função booleana. A demonstração da completude funcional de conjuntos como esses decorre diretamente do teorema de existência da forma normal disjuntiva discutido na Seção 1.3: como toda função booleana pode ser lida a partir de sua tabela-verdade e reescrita como uma disjunção das conjunções correspondentes às linhas em que assume valor verdadeiro, qualquer conjunto de conectivos capaz de expressar conjunção, disjunção e negação é, por construção, funcionalmente completo.
+Formalmente, um conjunto de conectivos $\mathcal{B}$ é dito funcionalmente completo quando toda função booleana $f : \{0,1\}^n \rightarrow \{0,1\}$, para qualquer $n$, pode ser expressa por uma fórmula construída exclusivamente a partir dos conectivos de $\mathcal{B}$ e de variáveis proposicionais. O conjunto $\{\wedge, \vee, \neg\}$, empregado nas definições de NNF, CNF e DNF na seção anterior, é funcionalmente completo, mas é também redundante: por força das leis de De Morgan, a disjunção pode ser definida a partir da conjunção e da negação (ou vice-versa), de modo que já os conjuntos $\{\wedge, \neg\}$ e $\{\vee, \neg\}$ bastam para expressar qualquer função booleana. A demonstração da completude funcional de conjuntos como esses decorre diretamente do teorema de existência da forma normal disjuntiva discutido na Seção~\ref{sec:definicoes}: como toda função booleana pode ser lida a partir de sua tabela-verdade e reescrita como uma disjunção das conjunções correspondentes às linhas em que assume valor verdadeiro, qualquer conjunto de conectivos capaz de expressar conjunção, disjunção e negação é, por construção, funcionalmente completo.
  
 O primeiro tratamento sistemático da questão da completude funcional é atribuído a Emil Post que, em sua dissertação de doutoramento de 1920, publicada em 1921 sob o título \textit{Introduction to a General Theory of Elementary Propositions}, não apenas demonstrou a completude do cálculo proposicional de \textit{Principia Mathematica}, de Whitehead e Russell, como também investigou sistematicamente quais subconjuntos de funções booleanas eram fechados sob composição \cite{post1921}. Esse trabalho deu origem ao que hoje se conhece como reticulado de Post, uma classificação completa de todos os \textit{clones} de funções booleanas — isto é, de todos os conjuntos de funções fechados sob composição e contendo as projeções — da qual decorre, como corolário, um critério necessário e suficiente para a completude funcional de qualquer conjunto de conectivos: um conjunto $\mathcal{B}$ é funcionalmente completo se e somente se não estiver inteiramente contido em nenhuma das cinco classes maximais de funções booleanas identificadas por Post, a saber, as funções que preservam o valor verdadeiro, as que preservam o valor falso, as autoduais, as monótonas e as lineares (afins).
  
-Um resultado particularmente relevante para a computação, e que ilustra de maneira contundente o alcance da noção de completude funcional, é a existência de conectivos isolados que, sozinhos, já constituem uma base funcionalmente completa. O caso mais conhecido é o da \textit{negação conjunta} (NAND), também chamada de traço de Sheffer, introduzida por Henry Sheffer em 1913 como parte de uma axiomatização alternativa da álgebra booleana \cite{sheffer1913}. A partir do NAND isoladamente é possível definir a negação ($p \mathbin{\uparrow} p$), a conjunção ($(p \mathbin{\uparrow} q) \mathbin{\uparrow} (p \mathbin{\uparrow} q)$) e, por extensão, todos os demais conectivos booleanos, o que faz do NAND — e, dualmente, do NOR, por vezes chamado de seta de Peirce — o único conectivo binário necessário para expressar qualquer fórmula proposicional. Essa propriedade não é apenas uma curiosidade lógica: é o fundamento teórico que permite que circuitos digitais inteiros sejam implementados unicamente a partir de portas NAND ou unicamente a partir de portas NOR, uma técnica amplamente empregada em projeto de circuitos integrados, e que retoma diretamente a discussão da Seção 1.2 sobre a aplicação da álgebra booleana aos circuitos de comutação.
+Um resultado particularmente relevante para a computação, e que ilustra de maneira contundente o alcance da noção de completude funcional, é a existência de conectivos isolados que, sozinhos, já constituem uma base funcionalmente completa. O caso mais conhecido é o da \textit{negação conjunta} (NAND), também chamada de traço de Sheffer, introduzida por Henry Sheffer em 1913 como parte de uma axiomatização alternativa da álgebra booleana \cite{sheffer1913}. A partir do NAND isoladamente é possível definir a negação ($p \mathbin{\uparrow} p$), a conjunção ($(p \mathbin{\uparrow} q) \mathbin{\uparrow} (p \mathbin{\uparrow} q)$) e, por extensão, todos os demais conectivos booleanos, o que faz do NAND — e, dualmente, do NOR, por vezes chamado de seta de Peirce — o único conectivo binário necessário para expressar qualquer fórmula proposicional. Essa propriedade não é apenas uma curiosidade lógica: é o fundamento teórico que permite que circuitos digitais inteiros sejam implementados unicamente a partir de portas NAND ou unicamente a partir de portas NOR, uma técnica amplamente empregada em projeto de circuitos integrados, e que retoma diretamente a discussão da Seção~\ref{sec:computacao} sobre a aplicação da álgebra booleana aos circuitos de comutação.
  
-A completude funcional, portanto, não é uma questão meramente formal: é ela que garante, de um lado, que as formas normais definidas na Seção 1.3 são capazes de representar qualquer fórmula da lógica proposicional, e, de outro, que a escolha da base de conectivos empregada em uma implementação computacional — seja ela $\{\wedge, \vee, \neg\}$, seja um conectivo único como o NAND — é uma decisão de engenharia e não uma limitação expressiva. Essa distinção entre expressividade teórica e economia de representação será retomada na Seção 1.5, na qual são discutidas as limitações teóricas que, apesar da completude funcional aqui estabelecida, ainda cercam o uso prático das formas normais.
+A completude funcional, portanto, não é uma questão meramente formal: é ela que garante, de um lado, que as formas normais definidas na Seção~\ref{sec:definicoes} são capazes de representar qualquer fórmula da lógica proposicional, e, de outro, que a escolha da base de conectivos empregada em uma implementação computacional — seja ela $\{\wedge, \vee, \neg\}$, seja um conectivo único como o NAND — é uma decisão de engenharia e não uma limitação expressiva. Essa distinção entre expressividade teórica e economia de representação será retomada na Seção~\ref{sec:limitacoes}, na qual são discutidas as limitações teóricas que, apesar da completude funcional aqui estabelecida, ainda cercam o uso prático das formas normais.
 
-A Figura \ref{fig:linha-tempo} situa, numa mesma linha do tempo, os marcos históricos discutidos ao longo das Seções 1.1, 1.2 e 1.4 — desde a álgebra de Boole até os resultados de Cook sobre a complexidade do problema de satisfazibilidade, retomado na Seção 1.5.
+A Figura \ref{fig:linha-tempo} situa, numa mesma linha do tempo, os marcos históricos discutidos ao longo das Seções~\ref{sec:origens}, \ref{sec:computacao} e \ref{sec:completude} — desde a álgebra de Boole até os resultados de Cook sobre a complexidade do problema de satisfazibilidade, retomado na Seção~\ref{sec:limitacoes}.
  
 \begin{figure}[htbp]
 \centering
@@ -296,13 +313,13 @@ A Figura \ref{fig:linha-tempo} situa, numa mesma linha do tempo, os marcos hist�
   \node[align=center, text width=2.4cm] at (17.8,-1.0) {\textbf{1971}\\Cook};
 \end{tikzpicture}%
 }
-\caption{Linha do tempo (fora de escala) dos principais marcos históricos discutidos no Capítulo 1}
+\caption{Linha do tempo (fora de escala) dos principais marcos históricos discutidos no Capítulo~\ref{cap:fundamentos}}
 \label{fig:linha-tempo}
 \end{figure}
 
-\section{Limitações teóricas}
+\section{Limitações teóricas}\label{sec:limitacoes}
 
-As três seções anteriores estabeleceram um panorama aparentemente favorável: toda fórmula proposicional admite uma NNF, uma CNF e uma DNF equivalentes (Seção 1.3), toda fórmula de primeira ordem admite uma PNF equivalente (Seção 1.3), e a completude funcional garante que qualquer base de conectivos suficientemente expressiva — desde $\{\wedge, \vee, \neg\}$ até um único conectivo como o NAND — é capaz de sustentar essa representação (Seção 1.4). Esse panorama, no entanto, diz respeito apenas à existência das formas normais, não ao custo de sua obtenção nem à sua utilidade prática irrestrita. Cabe agora fechar o Capítulo 1 examinando as limitações teóricas que atravessam esse aparato, as quais motivam, em grande medida, os algoritmos de conversão que serão discutidos no Capítulo 2.
+As três seções anteriores estabeleceram um panorama aparentemente favorável: toda fórmula proposicional admite uma NNF, uma CNF e uma DNF equivalentes (Seção~\ref{sec:definicoes}), toda fórmula de primeira ordem admite uma PNF equivalente (Seção~\ref{sec:definicoes}), e a completude funcional garante que qualquer base de conectivos suficientemente expressiva — desde $\{\wedge, \vee, \neg\}$ até um único conectivo como o NAND — é capaz de sustentar essa representação (Seção~\ref{sec:completude}). Esse panorama, no entanto, diz respeito apenas à existência das formas normais, não ao custo de sua obtenção nem à sua utilidade prática irrestrita. Cabe agora fechar o Capítulo~\ref{cap:fundamentos} examinando as limitações teóricas que atravessam esse aparato, as quais motivam, em grande medida, os algoritmos de conversão que serão discutidos no Capítulo~\ref{cap:algoritmos}.
  
 A primeira e mais imediata dessas limitações é de natureza combinatória: a conversão ingênua de uma fórmula qualquer para a forma normal conjuntiva ou disjuntiva, por meio da aplicação repetida das leis distributivas sobre uma fórmula em NNF, pode acarretar um crescimento exponencial no número de cláusulas ou de termos em relação ao tamanho da fórmula original. Uma fórmula tão simples quanto $(a_1 \wedge b_1) \vee (a_2 \wedge b_2) \vee \cdots \vee (a_n \wedge b_n)$, já em DNF, produz, quando convertida para CNF por distributividade, uma conjunção com $2^n$ cláusulas. Esse problema levou Grigori Tseitin a propor, em 1968, um procedimento alternativo de conversão para CNF que introduz uma variável auxiliar para cada subfórmula da expressão original, produzindo uma fórmula cujo tamanho cresce apenas linearmente em relação ao da fórmula de entrada \cite{tseitin1968}. O preço dessa eficiência, contudo, é uma perda de equivalência estrita: a fórmula obtida pela transformação de Tseitin não é logicamente equivalente à fórmula original, mas apenas \textit{equissatisfazível} a ela — isto é, uma é satisfazível se e somente se a outra também o for —, o que basta para os propósitos de verificação de satisfazibilidade, mas não para todo e qualquer uso das formas normais.
  
@@ -327,45 +344,45 @@ A Figura \ref{fig:pipeline-conversao} resume as rotas de conversão discutidas a
   \draw[-{Latex}] (NNF) -- node[below, sloped, font=\scriptsize] {variáveis auxiliares} (TSE);
   \draw[-{Latex}] (F) -- node[left, font=\scriptsize] {quantificadores} (PNF);
  
-  \node[lbl] at (14.3,1.8) {tamanho pode crescer exponencialmente (Seção 1.5)};
-  \node[lbl] at (14.3,-1.8) {tamanho linear; apenas equissatisfazível (Seção 1.5)};
+  \node[lbl] at (14.3,1.8) {tamanho pode crescer exponencialmente (Seção~\ref{sec:limitacoes})};
+  \node[lbl] at (14.3,-1.8) {tamanho linear; apenas equissatisfazível (Seção~\ref{sec:limitacoes})};
 \end{tikzpicture}%
 }
 \caption{Rotas de conversão de uma fórmula arbitrária para formas normais, com a alternativa de Tseitin}
 \label{fig:pipeline-conversao}
 \end{figure}
 
-Além do custo de obtenção, há um limite teórico mais profundo relacionado à complexidade computacional dos problemas que essas formas normais foram concebidas para resolver. Stephen Cook demonstrou, em 1971, que o problema de decidir se uma fórmula em CNF é satisfazível — o problema SAT mencionado na Seção 1.2 — é NP-completo, isto é, pertence à classe de problemas mais difíceis dentre aqueles cuja solução pode ser verificada em tempo polinomial \cite{cook1971}. Esse resultado, seminal para a teoria da complexidade computacional, tem uma contrapartida dual e frequentemente menos discutida: decidir se uma fórmula em DNF é uma tautologia — ou seja, se é verdadeira sob toda atribuição de valores — é um problema coNP-completo. A CNF e a DNF, portanto, embora simétricas do ponto de vista sintático, são radicalmente assimétricas do ponto de vista computacional: cada uma delas é eficiente para decidir um tipo de pergunta (satisfazibilidade, no caso da CNF; validade, no caso da DNF) e, presumivelmente, ineficiente para decidir a pergunta dual, a menos que P = NP.
+Além do custo de obtenção, há um limite teórico mais profundo relacionado à complexidade computacional dos problemas que essas formas normais foram concebidas para resolver. Stephen Cook demonstrou, em 1971, que o problema de decidir se uma fórmula em CNF é satisfazível — o problema SAT mencionado na Seção~\ref{sec:computacao} — é NP-completo, isto é, pertence à classe de problemas mais difíceis dentre aqueles cuja solução pode ser verificada em tempo polinomial \cite{cook1971}. Esse resultado, seminal para a teoria da complexidade computacional, tem uma contrapartida dual e frequentemente menos discutida: decidir se uma fórmula em DNF é uma tautologia — ou seja, se é verdadeira sob toda atribuição de valores — é um problema coNP-completo. A CNF e a DNF, portanto, embora simétricas do ponto de vista sintático, são radicalmente assimétricas do ponto de vista computacional: cada uma delas é eficiente para decidir um tipo de pergunta (satisfazibilidade, no caso da CNF; validade, no caso da DNF) e, presumivelmente, ineficiente para decidir a pergunta dual, a menos que P = NP.
  
-Uma terceira limitação diz respeito à ausência de um procedimento eficiente para obter a forma normal \textit{mínima} de uma fórmula, isto é, a CNF ou a DNF com o menor número possível de cláusulas ou de termos. Embora a existência de uma forma normal esteja garantida pelos teoremas discutidos na Seção 1.3, encontrar a representação mais compacta entre as múltiplas formas normais equivalentes de uma mesma fórmula — problema historicamente associado à minimização de circuitos lógicos e a métodos como o de Quine–McCluskey — é, em geral, um problema computacionalmente intratável. A não unicidade das formas normais, já apontada na Seção 1.3, não é, portanto, apenas uma curiosidade formal, mas a raiz de um problema de otimização genuinamente difícil.
+Uma terceira limitação diz respeito à ausência de um procedimento eficiente para obter a forma normal \textit{mínima} de uma fórmula, isto é, a CNF ou a DNF com o menor número possível de cláusulas ou de termos. Embora a existência de uma forma normal esteja garantida pelos teoremas discutidos na Seção~\ref{sec:definicoes}, encontrar a representação mais compacta entre as múltiplas formas normais equivalentes de uma mesma fórmula — problema historicamente associado à minimização de circuitos lógicos e a métodos como o de Quine--McCluskey — é, em geral, um problema computacionalmente intratável. A não unicidade das formas normais, já apontada na Seção~\ref{sec:definicoes}, não é, portanto, apenas uma curiosidade formal, mas a raiz de um problema de otimização genuinamente difícil.
  
 Por fim, no domínio da lógica de primeira ordem, a forma normal prenexa apresenta uma limitação análoga à observada na transformação de Tseitin: o procedimento de skolemização, frequentemente empregado em conjunto com a PNF para eliminar quantificadores existenciais em provadores automáticos de teoremas, também não preserva a equivalência lógica da fórmula original, apenas sua equissatisfazibilidade, e pode introduzir símbolos funcionais que aumentam a assinatura da linguagem. Além disso, a ordem em que os quantificadores aparecem no prefixo de uma PNF não é arbitrária: alternâncias entre quantificadores universais e existenciais podem impor, a certas classes de problemas, limites inferiores de complexidade que nenhuma reformulação sintática é capaz de contornar.
  
-Em conjunto, essas limitações — o crescimento exponencial da conversão ingênua, a intratabilidade computacional subjacente aos problemas de satisfazibilidade e validade, a dificuldade de minimização e a perda de equivalência estrita nos procedimentos de skolemização — não invalidam a utilidade teórica e prática das formas normais estabelecida ao longo deste capítulo, mas delimitam com precisão o que se pode esperar delas. É justamente esse delicado equilíbrio entre elegância teórica e custo computacional que o Capítulo 2 se propõe a examinar em maior profundidade, ao revisar os principais algoritmos de conversão para formas normais e discutir sua correção, sua complexidade e as decisões de implementação que deles decorrem.
+Em conjunto, essas limitações — o crescimento exponencial da conversão ingênua, a intratabilidade computacional subjacente aos problemas de satisfazibilidade e validade, a dificuldade de minimização e a perda de equivalência estrita nos procedimentos de skolemização — não invalidam a utilidade teórica e prática das formas normais estabelecida ao longo deste capítulo, mas delimitam com precisão o que se pode esperar delas. É justamente esse delicado equilíbrio entre elegância teórica e custo computacional que o Capítulo~\ref{cap:algoritmos} se propõe a examinar em maior profundidade, ao revisar os principais algoritmos de conversão para formas normais e discutir sua correção, sua complexidade e as decisões de implementação que deles decorrem.
 
 % =========================================================
 % CHAPTER 2 : Algoritmos de Transformação
 % =========================================================
-\chapter{Algoritmos de Transformação}
-\section{Revisão dos principais métodos de conversão para formas normais}
+\chapter{Algoritmos de Transformação}\label{cap:algoritmos}
+\section{Revisão dos principais métodos de conversão para formas normais}\label{sec:revisao-metodos}
 
-O Capítulo 1 estabeleceu a existência das formas normais e apontou, em termos gerais, os custos e as limitações que cercam sua obtenção. Cabe agora revisar, de maneira mais detida, os principais métodos algorítmicos empregados na conversão de uma fórmula arbitrária para cada uma dessas formas, preparando o terreno para a análise de correção e de complexidade computacional que será conduzida na Seção 2.2.
+O Capítulo~\ref{cap:fundamentos} estabeleceu a existência das formas normais e apontou, em termos gerais, os custos e as limitações que cercam sua obtenção. Cabe agora revisar, de maneira mais detida, os principais métodos algorítmicos empregados na conversão de uma fórmula arbitrária para cada uma dessas formas, preparando o terreno para a análise de correção e de complexidade computacional que será conduzida na Seção~\ref{sec:correcao-complexidade}.
  
-O primeiro estágio de qualquer um desses métodos é, invariavelmente, a obtenção da forma normal negativa. O algoritmo clássico de conversão para NNF procede em duas etapas recursivas sobre a estrutura da fórmula: a eliminação dos conectivos de implicação e de bicondicional, reescritos em termos de $\wedge$, $\vee$ e $\neg$, seguida da aplicação das leis de De Morgan e da eliminação da dupla negação para empurrar as negações até os literais. Por se tratar de um procedimento estrutural, aplicado uma única vez a cada subfórmula, sua execução tem custo linear no tamanho da fórmula de entrada — uma propriedade que o distingue favoravelmente dos métodos discutidos a seguir e que justifica sua adoção como etapa preparatória universal.
+O primeiro estágio de qualquer um desses métodos é, invariavelmente, a obtenção da forma normal negativa. O algoritmo clássico de conversão para NNF procede em duas etapas recursivas sobre a estrutura da fórmula: a eliminação dos conectivos de implicação e de bicondicional, reescritos em termos de $\wedge$, $\vee$ e $\neg$, seguida da aplicação das leis de De Morgan e da eliminação da dupla negação para empurrar as negações até os literais. Para fórmulas construídas com $\neg$, $\wedge$, $\vee$ e $\rightarrow$, trata-se de um procedimento estrutural, aplicado uma única vez a cada subfórmula, cujo custo é linear no tamanho da fórmula de entrada — uma propriedade que o distingue favoravelmente dos métodos discutidos a seguir e que justifica sua adoção como etapa preparatória universal. A presença do bicondicional exige cautela, pois sua reescrita em termos de $\wedge$ e $\vee$ duplica ambos os operandos, o que pode produzir crescimento exponencial em fórmulas com bicondicionais aninhados; esse ponto é examinado na Seção~\ref{sec:correcao-complexidade}.
  
-A partir de uma fórmula em NNF, o método tradicional de obtenção da CNF e da DNF consiste na aplicação repetida das leis distributivas, tal como apresentado na Seção 1.3. Esse método, por vezes chamado de conversão estrutural ingênua, tem a vantagem de preservar a equivalência lógica estrita da fórmula original, mas, como discutido na Seção 1.5, pode acarretar um crescimento exponencial no número de cláusulas ou de termos, o que o torna impraticável para fórmulas de porte considerável.
+A partir de uma fórmula em NNF, o método tradicional de obtenção da CNF e da DNF consiste na aplicação repetida das leis distributivas, tal como apresentado na Seção~\ref{sec:definicoes}. Esse método, por vezes chamado de conversão estrutural ingênua, tem a vantagem de preservar a equivalência lógica estrita da fórmula original, mas, como discutido na Seção~\ref{sec:limitacoes}, pode acarretar um crescimento exponencial no número de cláusulas ou de termos, o que o torna impraticável para fórmulas de porte considerável.
  
-Como alternativa, Tseitin propôs, em 1968, um método de conversão que introduz uma variável auxiliar para cada subfórmula não literal da expressão original, associando a cada uma delas uma bi-implicação que define seu valor em função dos valores de suas subfórmulas imediatas \cite{tseitin1968}. A conjunção de todas essas definições, já naturalmente em CNF, produz uma fórmula de tamanho linear em relação à fórmula de entrada — ao custo, já discutido na Seção 1.5, de preservar apenas a equissatisfazibilidade, e não a equivalência lógica estrita, com a fórmula original. Uma extensão importante desse método foi proposta por Plaisted e Greenbaum em 1986, que observaram ser possível reduzir ainda mais o número de cláusulas geradas ao levar em conta a \textit{polaridade} de cada subfórmula — isto é, a posição em que ela ocorre relativamente aos operadores de negação que a envolvem —, permitindo que, para subfórmulas de polaridade única, apenas uma das duas direções da bi-implicação seja de fato necessária \cite{plaisted1986}. Essa otimização, hoje amplamente empregada em provadores de teoremas e em solucionadores de SAT, ilustra como as duas décadas que separam Tseitin de Plaisted e Greenbaum foram dedicadas não a superar a compensação fundamental entre equivalência estrita e tamanho linear, mas a extrair dela o máximo de economia possível.
+Como alternativa, Tseitin propôs, em 1968, um método de conversão que introduz uma variável auxiliar para cada subfórmula não literal da expressão original, associando a cada uma delas uma bi-implicação que define seu valor em função dos valores de suas subfórmulas imediatas \cite{tseitin1968}. A conjunção de todas essas definições, já naturalmente em CNF, produz uma fórmula de tamanho linear em relação à fórmula de entrada — ao custo, já discutido na Seção~\ref{sec:limitacoes}, de preservar apenas a equissatisfazibilidade, e não a equivalência lógica estrita, com a fórmula original. Uma extensão importante desse método foi proposta por Plaisted e Greenbaum em 1986, que observaram ser possível reduzir ainda mais o número de cláusulas geradas ao levar em conta a \textit{polaridade} de cada subfórmula — isto é, a posição em que ela ocorre relativamente aos operadores de negação que a envolvem —, permitindo que, para subfórmulas de polaridade única, apenas uma das duas direções da bi-implicação seja de fato necessária \cite{plaisted1986}. Essa otimização, hoje amplamente empregada em provadores de teoremas e em solucionadores de SAT, ilustra como as duas décadas que separam Tseitin de Plaisted e Greenbaum foram dedicadas não a superar a compensação fundamental entre equivalência estrita e tamanho linear, mas a extrair dela o máximo de economia possível.
  
-No que diz respeito à forma normal prenexa, o método de conversão consiste na aplicação sucessiva de regras de equivalência que autorizam mover um quantificador para fora do escopo de um conectivo proposicional — por exemplo, transformando $\neg \forall x\, P(x)$ em $\exists x\, \neg P(x)$, ou $P \wedge \forall x\, Q(x)$, com $x$ não ocorrendo livre em $P$, em $\forall x\, (P \wedge Q(x))$ —, sempre precedidas da renomeação de variáveis ligadas que compartilhem o mesmo nome, de modo a evitar capturas indevidas. Esse procedimento, aplicado exaustivamente, sempre termina em uma fórmula em PNF, mas a ordem em que os quantificadores são movidos não é única, e diferentes estratégias de aplicação das regras podem produzir prefixos de quantificadores distintos — uma observação que retoma a discussão sobre não unicidade das formas normais apresentada na Seção 1.3, e que ganha relevância especial no caso da PNF, uma vez que a ordem dos quantificadores pode afetar diretamente a eficiência dos procedimentos de prova automática construídos sobre ela.
+No que diz respeito à forma normal prenexa, o método de conversão consiste na aplicação sucessiva de regras de equivalência que autorizam mover um quantificador para fora do escopo de um conectivo proposicional — por exemplo, transformando $\neg \forall x\, P(x)$ em $\exists x\, \neg P(x)$, ou $P \wedge \forall x\, Q(x)$, com $x$ não ocorrendo livre em $P$, em $\forall x\, (P \wedge Q(x))$ —, sempre precedidas da renomeação de variáveis ligadas que compartilhem o mesmo nome, de modo a evitar capturas indevidas. Esse procedimento, aplicado exaustivamente, sempre termina em uma fórmula em PNF, mas a ordem em que os quantificadores são movidos não é única, e diferentes estratégias de aplicação das regras podem produzir prefixos de quantificadores distintos — uma observação que retoma a discussão sobre não unicidade das formas normais apresentada na Seção~\ref{sec:definicoes}, e que ganha relevância especial no caso da PNF, uma vez que a ordem dos quantificadores pode afetar diretamente a eficiência dos procedimentos de prova automática construídos sobre ela.
  
-Por fim, cabe mencionar os métodos voltados não à obtenção de uma forma normal qualquer, mas à obtenção de sua versão \textit{mínima}. O mais conhecido deles é o método de Quine–McCluskey, proposto por Willard Quine em 1952 \cite{quine1952} e sistematizado por Edward McCluskey em 1956 \cite{mccluskey1956}, que procede por tabulação: a partir dos mintermos de uma função booleana, o método agrupa e combina sucessivamente os termos que diferem em exatamente um literal, produzindo o conjunto de implicantes primos da função, do qual se extrai, por meio de uma carta de cobertura, a expressão mínima em soma de produtos (ou, dualmente, em produto de somas). Trata-se de um método determinístico e sistemático, superior em rigor ao método gráfico dos mapas de Karnaugh para funções com muitas variáveis, mas que, como já apontado na Seção 1.5, tem custo exponencial no pior caso — uma limitação inerente ao próprio problema de minimização, e não a uma deficiência específica do método.
+Por fim, cabe mencionar os métodos voltados não à obtenção de uma forma normal qualquer, mas à obtenção de sua versão \textit{mínima}. O mais conhecido deles é o método de Quine--McCluskey, proposto por Willard Quine em 1952 \cite{quine1952} e sistematizado por Edward McCluskey em 1956 \cite{mccluskey1956}, que procede por tabulação: a partir dos mintermos de uma função booleana, o método agrupa e combina sucessivamente os termos que diferem em exatamente um literal, produzindo o conjunto de implicantes primos da função, do qual se extrai, por meio de uma carta de cobertura, a expressão mínima em soma de produtos (ou, dualmente, em produto de somas). Trata-se de um método determinístico e sistemático, superior em rigor ao método gráfico dos mapas de Karnaugh para funções com muitas variáveis, mas que, como já apontado na Seção~\ref{sec:limitacoes}, tem custo exponencial no pior caso — uma limitação inerente ao próprio problema de minimização, e não a uma deficiência específica do método.
  
-Os métodos revisados nesta seção — conversão para NNF, distributividade, Tseitin, Plaisted--Greenbaum, prenexação e Quine--McCluskey — serão retomados na Seção 2.2, na qual sua correção será formalmente demonstrada e sua complexidade computacional analisada com maior rigor.
+Os métodos revisados nesta seção — conversão para NNF, distributividade, Tseitin, Plaisted--Greenbaum, prenexação e Quine--McCluskey — serão retomados na Seção~\ref{sec:correcao-complexidade}, na qual sua correção será formalmente demonstrada e sua complexidade computacional analisada com maior rigor.
 
-\section{Correção, equivalência lógica e complexidade computacional}
+\section{Correção, equivalência lógica e complexidade computacional}\label{sec:correcao-complexidade}
 
-A revisão conduzida na Seção 2.1 descreveu o que cada método faz; cabe agora estabelecer o que cada um deles garante e quanto custa garantir. Três propriedades orientam essa análise: a \textit{terminação}, isto é, a certeza de que o procedimento alcança uma fórmula na forma-alvo após um número finito de passos; a \textit{correção}, entendida como a relação semântica que a fórmula produzida mantém com a de entrada; e a \textit{complexidade}, medida tanto no tempo de execução quanto no tamanho da saída. No que diz respeito à correção, convém distinguir duas noções que a Seção 1.5 já havia contraposto: a \textbf{equivalência lógica}, segundo a qual duas fórmulas são verdadeiras sob exatamente as mesmas valorações, e a \textbf{equissatisfazibilidade}, segundo a qual uma é satisfazível se e somente se a outra o é. A primeira implica a segunda, mas não o contrário, e a diferença entre ambas é precisamente o que permite a certos métodos escapar do crescimento exponencial, como se verá adiante.
+A revisão conduzida na Seção~\ref{sec:revisao-metodos} descreveu o que cada método faz; cabe agora estabelecer o que cada um deles garante e quanto custa garantir. Três propriedades orientam essa análise: a \textit{terminação}, isto é, a certeza de que o procedimento alcança uma fórmula na forma-alvo após um número finito de passos; a \textit{correção}, entendida como a relação semântica que a fórmula produzida mantém com a de entrada; e a \textit{complexidade}, medida tanto no tempo de execução quanto no tamanho da saída. No que diz respeito à correção, convém distinguir duas noções que a Seção~\ref{sec:limitacoes} já havia contraposto: a \textbf{equivalência lógica}, segundo a qual duas fórmulas são verdadeiras sob exatamente as mesmas valorações, e a \textbf{equissatisfazibilidade}, segundo a qual uma é satisfazível se e somente se a outra o é. A primeira implica a segunda, mas não o contrário, e a diferença entre ambas é precisamente o que permite a certos métodos escapar do crescimento exponencial, como se verá adiante.
  
 Comecemos pela forma normal negativa, cujo procedimento convém formular de maneira recursiva, carregando-se consigo a \textit{polaridade} $\pi \in \{+,-\}$ da subfórmula corrente, isto é, se ela deve ser lida afirmada ($+$) ou negada ($-$). Escrevendo $\overline{\pi}$ para a polaridade oposta a $\pi$ e $p$ para uma variável proposicional, a função $\mathrm{nnf}$ é definida por
 \begin{align*}
@@ -380,7 +397,7 @@ Comecemos pela forma normal negativa, cujo procedimento convém formular de mane
 \mathrm{nnf}(\varphi\leftrightarrow\psi,+) &= \bigl(\mathrm{nnf}(\varphi,-)\vee\mathrm{nnf}(\psi,+)\bigr)\wedge\bigl(\mathrm{nnf}(\psi,-)\vee\mathrm{nnf}(\varphi,+)\bigr),\\
 \mathrm{nnf}(\varphi\leftrightarrow\psi,-) &= \bigl(\mathrm{nnf}(\varphi,+)\wedge\mathrm{nnf}(\psi,-)\bigr)\vee\bigl(\mathrm{nnf}(\psi,+)\wedge\mathrm{nnf}(\varphi,-)\bigr).
 \end{align*}
-Essa formulação funde, em uma única passagem, as duas etapas descritas na Seção 2.1: a eliminação dos conectivos $\rightarrow$ e $\leftrightarrow$ e o deslocamento das negações até os literais.
+Essa formulação funde, em uma única passagem, as duas etapas descritas na Seção~\ref{sec:revisao-metodos}: a eliminação dos conectivos $\rightarrow$ e $\leftrightarrow$ e o deslocamento das negações até os literais.
  
 \begin{proposicao}[Correção da NNF]\label{prop:nnf}
 Para toda fórmula $\varphi$, $\mathrm{nnf}(\varphi,+)$ está em NNF e é logicamente equivalente a $\varphi$, e $\mathrm{nnf}(\varphi,-)$ está em NNF e é logicamente equivalente a $\neg\varphi$. Além disso, o cálculo termina e, se $\varphi$ não contém $\leftrightarrow$, seu custo, em tempo e em tamanho da saída, é linear em $|\varphi|$.
@@ -429,31 +446,73 @@ Por fim, (ii) e (iii) fornecem a equissatisfazibilidade e, por estabelecerem uma
  
 A construção estende-se a fórmulas arbitrárias tratando cada ocorrência de conectivo como uma porta com um número constante de cláusulas, inclusive para o bicondicional, que requer quatro. Esse tratamento direto evita a duplicação de operandos que torna a conversão para NNF exponencial em presença de bicondicionais aninhados. O refinamento de Plaisted e Greenbaum \cite{plaisted1986} explora, por sua vez, o fato de que, em uma fórmula em NNF, toda ocorrência não literal tem polaridade positiva: basta, então, codificar a direção $x_\psi\rightarrow([\psi_1]\wedge[\psi_2])$, ou $x_\psi\rightarrow([\psi_1]\vee[\psi_2])$, de modo que cada porta gera duas cláusulas, no caso da conjunção, ou uma, no da disjunção, em vez de três. A prova de correção segue a da Proposição~\ref{prop:tseitin} com o lema enfraquecido para $J(x_\psi)=1\Rightarrow J(\psi)=1$, o que basta para (iii); a extensão de (ii) continua a existir, mas deixa de ser única. A equissatisfazibilidade é, assim, preservada, ao passo que o número de modelos, em geral, não o é.
  
-No caso da forma normal prenexa, a correção apoia-se em duas famílias de equivalências: as regras de deslocamento de quantificadores, que só são equivalências sob a condição lateral de que a variável quantificada não ocorra livre na outra componente — por exemplo, $\psi\wedge\forall x\,\varphi\equiv\forall x\,(\psi\wedge\varphi)$ se $x\notin\mathrm{FV}(\psi)$, em que $\mathrm{FV}(\psi)$ denota o conjunto das variáveis que ocorrem livres em $\psi$ —, e a renomeação de variáveis ligadas ($\alpha$-conversão), que, aplicada previamente, permite satisfazer sempre essa condição. Como cada aplicação desloca um quantificador exatamente uma posição para fora e nenhuma regra o desloca para dentro, o procedimento termina após no máximo $q\cdot d$ deslocamentos, em que $q$ é o número de quantificadores e $d$ a profundidade da fórmula. O custo é, assim, polinomial, e o tamanho da fórmula não cresce, com a mesma ressalva, relativa ao bicondicional, que se fez para a NNF. A skolemização, que frequentemente se segue à prenexação, preserva apenas a equissatisfazibilidade (Seção 1.5), situando-se, nesse aspecto, do mesmo lado da fronteira que a transformação de Tseitin.
+No caso da forma normal prenexa, a correção apoia-se em duas famílias de equivalências: as regras de deslocamento de quantificadores, que só são equivalências sob a condição lateral de que a variável quantificada não ocorra livre na outra componente — por exemplo, $\psi\wedge\forall x\,\varphi\equiv\forall x\,(\psi\wedge\varphi)$ se $x\notin\mathrm{FV}(\psi)$, em que $\mathrm{FV}(\psi)$ denota o conjunto das variáveis que ocorrem livres em $\psi$ —, e a renomeação de variáveis ligadas ($\alpha$-conversão), que, aplicada previamente, permite satisfazer sempre essa condição. Como cada aplicação desloca um quantificador exatamente uma posição para fora e nenhuma regra o desloca para dentro, o procedimento termina após no máximo $q\cdot d$ deslocamentos, em que $q$ é o número de quantificadores e $d$ a profundidade da fórmula. O custo é, assim, polinomial, e o tamanho da fórmula não cresce, com a mesma ressalva, relativa ao bicondicional, que se fez para a NNF. A skolemização, que frequentemente se segue à prenexação, preserva apenas a equissatisfazibilidade (Seção~\ref{sec:limitacoes}), situando-se, nesse aspecto, do mesmo lado da fronteira que a transformação de Tseitin.
  
 Resta o método de Quine--McCluskey. Sua correção decorre do resultado de Quine segundo o qual alguma soma de produtos mínima é formada apenas por implicantes primos \cite{quine1952,mccluskey1956}. Quanto ao custo, convém distinguir as duas fases do método. A geração dos implicantes primos produz, para $n$ variáveis, uma quantidade de implicantes limitada por uma função da ordem de $3^n/\sqrt{n}$, limite quase justo, pois existem funções com implicantes primos da ordem de $3^n/n$ \cite{chandra1978}. Como a tabela-verdade tem $N=2^n$ linhas e $3^n=N^{\log_2 3}$, esse número é polinomial em $N$, embora exponencial em $n$. A dificuldade essencial reside na segunda fase, a seleção, entre os implicantes primos, de uma cobertura de tamanho mínimo, problema do tipo cobertura de conjuntos: minimizar uma DNF dada a tabela-verdade é NP-completo, resultado atribuído a Masek, nunca publicado, e reapresentado com uma demonstração mais simples por Allender et al. \cite{allender2006}.
  
-Em síntese, os resultados desta seção delimitam, para cada método, o que se obtém e a que preço. A conversão para NNF e para PNF preserva a equivalência a custo polinomial, linear quando não há bicondicionais; a distributividade preserva a equivalência, mas está sujeita ao limite inferior exponencial da Proposição~\ref{prop:limite-cnf}; as transformações de Tseitin e de Plaisted--Greenbaum atingem tamanho linear ao custo de trocar a equivalência pela equissatisfazibilidade; e a obtenção de formas mínimas esbarra na NP-completude da seleção de cobertura. Esse quadro de compromissos condiciona o que uma implementação pode oferecer a um estudante, em particular se a ferramenta deve exibir apenas transformações que preservam a equivalência, que se acompanham passo a passo com mais facilidade, ou também transformações equissatisfazíveis, mais eficientes, porém menos transparentes do ponto de vista didático. Essa escolha de projeto será retomada na Seção 2.3 e no Capítulo 3.
+Em síntese, os resultados desta seção delimitam, para cada método, o que se obtém e a que preço. A conversão para NNF e para PNF preserva a equivalência a custo polinomial, linear quando não há bicondicionais; a distributividade preserva a equivalência, mas está sujeita ao limite inferior exponencial da Proposição~\ref{prop:limite-cnf}; as transformações de Tseitin e de Plaisted--Greenbaum atingem tamanho linear ao custo de trocar a equivalência pela equissatisfazibilidade; e a obtenção de formas mínimas esbarra na NP-completude da seleção de cobertura. Esse quadro de compromissos condiciona o que uma implementação pode oferecer a um estudante, em particular se a ferramenta deve exibir apenas transformações que preservam a equivalência, que se acompanham passo a passo com mais facilidade, ou também transformações equissatisfazíveis, mais eficientes, porém menos transparentes do ponto de vista didático. Essa escolha de projeto será retomada na Seção~\ref{sec:implementacao-computacional} e no Capítulo~\ref{cap:ferramenta}.
 
-\section{Considerações sobre implementação computacional}
+\section{Considerações sobre implementação computacional}\label{sec:implementacao-computacional}
+
+Os métodos examinados nas seções anteriores foram tratados como objetos matemáticos: procedimentos definidos sobre fórmulas, cuja correção e cujo custo foram estabelecidos em abstrato. Cabe agora considerar o que se altera quando esses procedimentos passam a ser programas, e em particular programas destinados a acompanhar um estudante em cada etapa de uma transformação. A implementação introduz decisões que a análise teórica deixa em aberto, como a representação das fórmulas, a ordem de aplicação das regras e o tratamento dos casos em que o resultado é grande demais para ser exibido, e algumas dessas decisões decorrem diretamente dos resultados da Seção~\ref{sec:correcao-complexidade}.
+
+A primeira delas é a delimitação do que a ferramenta se propõe a fazer. Dos métodos revisados na Seção~\ref{sec:revisao-metodos}, a ferramenta restringe-se à conversão para a forma normal conjuntiva e para a forma normal disjuntiva. A forma normal negativa figura como etapa intermediária indispensável, uma vez que ambas as conversões partem dela, mas não como produto final autônomo; a forma normal prenexa, a skolemização e a minimização por Quine--McCluskey permanecem como objeto de análise teórica neste trabalho, sem módulo correspondente. O recorte concentra a implementação no domínio proposicional, no qual cada passo da conversão é uma aplicação de uma lei algébrica elementar e pode, por isso, ser exibido e conferido por quem estuda.
+
+No que diz respeito à representação, o caminho natural é tratar cada fórmula como uma árvore de sintaxe abstrata, com nós para variáveis, negação e conectivos binários. Se essas árvores são imutáveis, cada passo da conversão produz uma nova fórmula sem alterar a anterior, e a derivação completa, isto é, a sequência de fórmulas intermediárias acompanhadas da lei aplicada em cada passo, pode ser conservada integralmente, o que é precisamente o que a interface pedagógica precisa exibir. A entrada textual exige, além disso, um analisador sintático que fixe a precedência e a associatividade dos conectivos; a convenção usual, em que a negação se liga mais fortemente que a conjunção, esta mais que a disjunção, e esta mais que a implicação e o bicondicional, é um dos pontos a serem fixados e documentados na Seção~\ref{sec:requisitos}, pois uma convenção implícita é fonte frequente de leituras divergentes entre o estudante e a ferramenta.
+
+A representação do resultado merece atenção própria. Uma CNF pode ser vista como uma árvore, fiel à notação lógica, ou como um conjunto de conjuntos de literais, a chamada forma clausal, na qual a ordem e a repetição de cláusulas e de literais deixam de existir. A segunda representação é mais compacta e torna triviais as comparações, mas incorpora silenciosamente as leis da comutatividade, da associatividade e da idempotência, que a árvore trata como transformações explícitas. Essa diferença não é inócua em um contexto de ensino: se a ferramenta usa a forma clausal durante toda a derivação, certos passos que o estudante faria à mão desaparecem sem registro. Há, portanto, um compromisso entre a economia da representação e a transparência da derivação, que é resolvido, no projeto, mantendo-se a estrutura de árvore enquanto a derivação é exibida. A forma clausal permanece útil para as simplificações opcionais que preservam a equivalência, como a eliminação de cláusulas tautológicas e de cláusulas subsumidas por outras (e, dualmente, de termos contraditórios e absorvidos, no caso da DNF).
+
+Do ponto de vista do procedimento, a conversão pode ser vista como um sistema de reescrita, em que cada passo consiste em aplicar uma lei, como a eliminação de implicações, as leis de De Morgan, a eliminação da dupla negação ou a distributividade, a uma ocorrência determinada de subfórmula. Como a forma normal de uma fórmula não é única (Seção~\ref{sec:definicoes}), a ordem em que as ocorrências são escolhidas influencia o resultado e o tamanho das fórmulas intermediárias. Uma implementação voltada ao ensino precisa, por isso, adotar uma estratégia determinística, que sempre escolha a ocorrência segundo o mesmo critério, de modo que a mesma entrada produza sempre a mesma derivação, o que é requisito tanto para a reprodutibilidade em sala de aula quanto para a escrita de testes automatizados. O pseudocódigo dos procedimentos de conversão para a CNF e para a DNF, incluindo o tratamento do limite de tamanho, consta do Apêndice~\ref{app:pseudocodigo}.
+
+A Proposição~\ref{prop:limite-cnf} tem uma consequência prática que nenhuma implementação pode contornar: como toda CNF equivalente a $(a_1\wedge b_1)\vee\cdots\vee(a_n\wedge b_n)$ tem ao menos $2^n$ cláusulas, já para $n=20$ a saída ultrapassa um milhão de cláusulas, e o mesmo vale, dualmente, para a DNF. Uma ferramenta que preserva a equivalência encontrará, portanto, entradas para as quais o resultado é grande demais para ser exibido ou, simplesmente, para ser útil a quem estuda. A resposta adequada não é deixar que a execução se esgote em memória, mas impor um limite ao tamanho da fórmula e ao número de passos, e informar o estudante de que o limite foi atingido, de modo que a explosão combinatória seja apresentada como o fenômeno que é, e não como uma falha do programa. O caso do bicondicional aninhado na NNF admite um tratamento mais fino: como a função $\mathrm{nnf}$ da Seção~\ref{sec:correcao-complexidade} depende apenas da subfórmula e da polaridade, e cada subfórmula admite somente duas polaridades, o armazenamento de resultados já calculados permite que as cópias sejam compartilhadas em memória, de modo que a representação interna cresce linearmente, embora a fórmula exibida continue exponencial.
+
+A verificação do resultado é um problema à parte, e sua solução fundamenta a validação descrita na Seção~\ref{sec:validacao}. Há três propriedades a conferir: que a saída esteja de fato na forma-alvo, o que é um teste puramente sintático; que ela seja equivalente à entrada; e que cada passo intermediário aplique corretamente a lei declarada. A equivalência pode ser verificada, para fórmulas com poucas variáveis, comparando-se as tabelas-verdade, ao custo de $2^n$ valorações; para fórmulas maiores, recorre-se à redução ao problema SAT, uma vez que $\varphi\equiv\psi$ se e somente se $\neg(\varphi\leftrightarrow\psi)$ é insatisfazível. A tabela-verdade tem a vantagem adicional de ser, ela própria, um método de conversão (Seção~\ref{sec:definicoes}) e, portanto, um oráculo independente do algoritmo implementado.
+
+As transformações de Tseitin e de Plaisted--Greenbaum levantam uma questão distinta. Ambas produzem uma CNF de tamanho linear, mas ao preço de introduzir variáveis auxiliares e de preservar apenas a equissatisfazibilidade, de modo que a verificação de equivalência descrita acima deixa de se aplicar a seus resultados e a derivação se afasta da fórmula original de maneira que um estudante não reconstitui por manipulação algébrica. Se a ferramenta deve oferecê-las, como alternativa à distributividade nos casos em que esta é inviável, é matéria a ser definida junto aos requisitos funcionais, na Seção~\ref{sec:requisitos}.
+
+A Tabela~\ref{tab:comparacao-metodos} reúne os resultados da Seção~\ref{sec:correcao-complexidade} segundo os critérios que orientam as decisões acima: a forma obtida, a relação que ela mantém com a fórmula original e o tamanho e o custo envolvidos. A leitura conjunta das colunas evidencia o compromisso central do capítulo: os métodos que preservam a equivalência, e que por isso se prestam a uma derivação algébrica passo a passo, são justamente aqueles sujeitos a crescimento exponencial no caso da CNF e da DNF, ao passo que os de custo linear abandonam a equivalência. É sobre esse quadro que se constroem os requisitos e a arquitetura da ferramenta, apresentados no Capítulo~\ref{cap:ferramenta}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Síntese comparativa dos métodos de conversão analisados na Seção~\ref{sec:correcao-complexidade}}
+\label{tab:comparacao-metodos}
+\begin{tabular}{@{}p{2.7cm}p{1.7cm}p{2.9cm}p{3.7cm}p{1.8cm}@{}}
+\toprule
+\textbf{Método} & \textbf{Forma obtida} & \textbf{Relação com a fórmula original} & \textbf{Tamanho da saída e custo} & \textbf{Resultado de referência} \\
+\midrule
+Conversão para NNF & NNF & Equivalência & Linear em $|\varphi|$ sem $\leftrightarrow$; com bicondicionais aninhados em profundidade $k$, da ordem de $2^k$ & Prop.~\ref{prop:nnf} \\
+\addlinespace
+Distributividade & CNF ou DNF & Equivalência & Exponencial no pior caso: ao menos $2^n$ cláusulas para $\varphi_n$ & Prop.~\ref{prop:limite-cnf} \\
+\addlinespace
+Tseitin & CNF & Equissatisfazível & Linear: no máximo $3c+1$ cláusulas & Prop.~\ref{prop:tseitin} \\
+\addlinespace
+Plaisted--Greenbaum & CNF & Equissatisfazível & Linear: duas cláusulas por conjunção e uma por disjunção & Seç.~\ref{sec:correcao-complexidade} \\
+\addlinespace
+Prenexação & PNF & Equivalência & Polinomial: no máximo $q\cdot d$ deslocamentos & Seç.~\ref{sec:correcao-complexidade} \\
+\addlinespace
+Quine--McCluskey & DNF ou CNF mínima & Equivalência & Implicantes primos em número da ordem de $3^n/\sqrt{n}$ (polinomial em $N=2^n$); seleção da cobertura mínima NP-completa & Seç.~\ref{sec:correcao-complexidade} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % =========================================================
 % CHAPTER 3 : Projeto e implementação da ferramenta
 % =========================================================
-\chapter{Projeto e Implementação da Ferramenta}
-\section{Requisitos funcionais e arquitetura da solução}
-\section{Módulos de transformação algorítmica}
-\section{Interface pedagógica}
-\section{Validação: testes automatizados}
+\chapter{Projeto e Implementação da Ferramenta}\label{cap:ferramenta}
+\section{Requisitos funcionais e arquitetura da solução}\label{sec:requisitos}
+\section{Módulos de transformação algorítmica}\label{sec:modulos}
+\section{Interface pedagógica}\label{sec:interface}
+\section{Validação: testes automatizados}\label{sec:validacao}
 
 % =========================================================
 % CHAPTER 4 : Conclusão
 % =========================================================
-\chapter{Conclusão}
-\section{Síntese dos resultados obtidos}
-\section{Contribuições para o ensino de lógica}
-\section{Limitações do trabalho realizado}
-\section{Perspetivas de evolução e trabalhos futuros}
+\chapter{Conclusão}\label{cap:conclusao}
+\section{Síntese dos resultados obtidos}\label{sec:sintese}
+\section{Contribuições para o ensino de lógica}\label{sec:contribuicoes}
+\section{Limitações do trabalho realizado}\label{sec:limitacoes-trabalho}
+\section{Perspetivas de evolução e trabalhos futuros}\label{sec:trabalhos-futuros}
 
 % =========================================================
 % References (no PDF: "References")
@@ -465,11 +524,134 @@ Em síntese, os resultados desta seção delimitam, para cada método, o que se 
 \bibliography{referencias}
 
 % =========================================================
-% APPENDICES I–X (como no PDF)
+% APPENDICES I--X (como no PDF)
 % =========================================================
 \appendix
 
-\chapter{Scripts de Transformação}
+\chapter{Algoritmos de Referência em Pseudocódigo}\label{app:pseudocodigo}
+
+Este apêndice reúne, em pseudocódigo independente de linguagem, os procedimentos de conversão para as formas normais conjuntiva e disjuntiva, que constituem o escopo da ferramenta descrita no Capítulo~\ref{cap:ferramenta}. Os algoritmos formalizam o que foi definido e analisado nas Seções~\ref{sec:revisao-metodos} e~\ref{sec:correcao-complexidade} e as considerações de implementação da Seção~\ref{sec:implementacao-computacional}; a correção da conversão para NNF e o limite inferior da conversão por distributividade encontram-se nas Proposições~\ref{prop:nnf} e~\ref{prop:limite-cnf}. Os métodos que a ferramenta não implementa, como a prenexação, a transformação de Tseitin e o método de Quine--McCluskey, permanecem descritos apenas no corpo do texto. Os scripts efetivamente utilizados na ferramenta constam do Apêndice~\ref{app:scripts}.
+
+Nos algoritmos, uma \textit{cláusula} (respectivamente, um \textit{termo}) é representada como um conjunto de literais, e uma CNF (respectivamente, uma DNF) como um conjunto de cláusulas (respectivamente, de termos), isto é, na forma clausal discutida na Seção~\ref{sec:implementacao-computacional}. O parâmetro $L$ é o limite de tamanho da saída; quando excedido, o procedimento sinaliza o fato ao estudante em vez de prosseguir.
+
+\section{Conversão para a forma normal negativa}
+
+O Algoritmo~\ref{alg:nnf} transcreve a função $\mathrm{nnf}$ da Seção~\ref{sec:correcao-complexidade}, que carrega a polaridade da subfórmula corrente e elimina $\rightarrow$ e $\leftrightarrow$ na mesma passagem em que desloca as negações até os literais. A chamada inicial é $\textsc{Nnf}(\varphi,+)$. Como mostra a Proposição~\ref{prop:nnf}, o custo é linear em $|\varphi|$ na ausência de bicondicionais e pode ser exponencial na profundidade de seu aninhamento.
+
+\begin{algorithm}[htbp]
+\caption{Conversão para NNF com polaridade}\label{alg:nnf}
+\begin{algorithmic}[1]
+\Require fórmula $\varphi$ e polaridade $\pi\in\{+,-\}$
+\Ensure fórmula em NNF equivalente a $\varphi$ (se $\pi=+$) ou a $\neg\varphi$ (se $\pi=-$)
+\Function{Nnf}{$\varphi,\pi$}
+  \If{$\varphi$ é uma variável $p$}
+    \State \Return $p$ se $\pi=+$; $\neg p$ se $\pi=-$
+  \ElsIf{$\varphi=\neg\alpha$}
+    \State \Return \Call{Nnf}{$\alpha,\overline{\pi}$}
+  \ElsIf{$\varphi=\alpha\wedge\beta$}
+    \State \Return $\textsc{Nnf}(\alpha,\pi)\wedge\textsc{Nnf}(\beta,\pi)$ se $\pi=+$; $\textsc{Nnf}(\alpha,\pi)\vee\textsc{Nnf}(\beta,\pi)$ se $\pi=-$
+  \ElsIf{$\varphi=\alpha\vee\beta$}
+    \State \Return $\textsc{Nnf}(\alpha,\pi)\vee\textsc{Nnf}(\beta,\pi)$ se $\pi=+$; $\textsc{Nnf}(\alpha,\pi)\wedge\textsc{Nnf}(\beta,\pi)$ se $\pi=-$
+  \ElsIf{$\varphi=\alpha\rightarrow\beta$}
+    \State \Return $\textsc{Nnf}(\alpha,-)\vee\textsc{Nnf}(\beta,+)$ se $\pi=+$; $\textsc{Nnf}(\alpha,+)\wedge\textsc{Nnf}(\beta,-)$ se $\pi=-$
+  \ElsIf{$\varphi=\alpha\leftrightarrow\beta$}
+    \If{$\pi=+$}
+      \State \Return $\bigl(\textsc{Nnf}(\alpha,-)\vee\textsc{Nnf}(\beta,+)\bigr)\wedge\bigl(\textsc{Nnf}(\beta,-)\vee\textsc{Nnf}(\alpha,+)\bigr)$
+    \Else
+      \State \Return $\bigl(\textsc{Nnf}(\alpha,+)\wedge\textsc{Nnf}(\beta,-)\bigr)\vee\bigl(\textsc{Nnf}(\beta,+)\wedge\textsc{Nnf}(\alpha,-)\bigr)$
+    \EndIf
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Conversão para a forma normal conjuntiva e disjuntiva}
+
+A partir de uma fórmula em NNF, o Algoritmo~\ref{alg:cnf} obtém a CNF por distributividade, tal como formulado na Seção~\ref{sec:correcao-complexidade}: a conjunção corresponde à união dos conjuntos de cláusulas, e a disjunção, ao produto $\otimes$, que combina cada cláusula do primeiro conjunto com cada cláusula do segundo. É nesse produto que reside o custo exponencial, de modo que o limite $L$ é verificado antes de calculá-lo.
+
+\begin{algorithm}[htbp]
+\caption{CNF por distributividade, a partir de uma NNF}\label{alg:cnf}
+\begin{algorithmic}[1]
+\Require fórmula $\varphi$ em NNF e limite $L$
+\Ensure conjunto de cláusulas equivalente a $\varphi$, ou sinalização de limite excedido
+\Function{Cnf}{$\varphi,L$}
+  \If{$\varphi$ é um literal $\ell$}
+    \State \Return $\{\{\ell\}\}$
+  \ElsIf{$\varphi=\alpha\wedge\beta$}
+    \State $A\gets\textsc{Cnf}(\alpha,L)$;\quad $B\gets\textsc{Cnf}(\beta,L)$
+    \If{$|A\cup B|>L$} \State sinalizar \textsc{LimiteExcedido} \EndIf
+    \State \Return $A\cup B$
+  \ElsIf{$\varphi=\alpha\vee\beta$}
+    \State $A\gets\textsc{Cnf}(\alpha,L)$;\quad $B\gets\textsc{Cnf}(\beta,L)$
+    \If{$|A|\cdot|B|>L$} \State sinalizar \textsc{LimiteExcedido} \EndIf
+    \State \Return $\{\,C\cup D \mid C\in A,\ D\in B\,\}$
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Por dualidade, a DNF é obtida trocando-se os papéis da conjunção e da disjunção, como mostra o Algoritmo~\ref{alg:dnf}: a disjunção corresponde à união dos conjuntos de termos, e a conjunção, ao produto. O limite inferior da Proposição~\ref{prop:limite-cnf} vale, dualmente, para este caso.
+
+\begin{algorithm}[htbp]
+\caption{DNF por distributividade, a partir de uma NNF}\label{alg:dnf}
+\begin{algorithmic}[1]
+\Require fórmula $\varphi$ em NNF e limite $L$
+\Ensure conjunto de termos equivalente a $\varphi$, ou sinalização de limite excedido
+\Function{Dnf}{$\varphi,L$}
+  \If{$\varphi$ é um literal $\ell$}
+    \State \Return $\{\{\ell\}\}$
+  \ElsIf{$\varphi=\alpha\vee\beta$}
+    \State $A\gets\textsc{Dnf}(\alpha,L)$;\quad $B\gets\textsc{Dnf}(\beta,L)$
+    \If{$|A\cup B|>L$} \State sinalizar \textsc{LimiteExcedido} \EndIf
+    \State \Return $A\cup B$
+  \ElsIf{$\varphi=\alpha\wedge\beta$}
+    \State $A\gets\textsc{Dnf}(\alpha,L)$;\quad $B\gets\textsc{Dnf}(\beta,L)$
+    \If{$|A|\cdot|B|>L$} \State sinalizar \textsc{LimiteExcedido} \EndIf
+    \State \Return $\{\,C\cup D \mid C\in A,\ D\in B\,\}$
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Simplificações que preservam a equivalência}
+
+As simplificações opcionais mencionadas na Seção~\ref{sec:implementacao-computacional} operam sobre a forma clausal. O Algoritmo~\ref{alg:simplificar} trata o caso da CNF: elimina as cláusulas tautológicas, isto é, as que contêm um literal e seu complementar, e as cláusulas subsumidas, isto é, as que contêm propriamente outra cláusula do conjunto, pois $C\wedge(C\vee D)\equiv C$. O caso da DNF é dual: eliminam-se os termos contraditórios e os termos que contêm propriamente outro termo do conjunto. No pior caso, o procedimento compara todos os pares de cláusulas, de modo que seu custo é quadrático no tamanho do conjunto.
+
+\begin{algorithm}[htbp]
+\caption{Simplificação de uma CNF}\label{alg:simplificar}
+\begin{algorithmic}[1]
+\Require conjunto de cláusulas $\Gamma$
+\Ensure conjunto de cláusulas equivalente a $\Gamma$, sem tautologias e sem subsunção
+\Function{Simplificar}{$\Gamma$}
+  \State $\Gamma\gets\{\,C\in\Gamma \mid C \text{ não contém um literal e seu complementar}\,\}$
+  \State \Return $\{\,C\in\Gamma \mid \text{não existe } D\in\Gamma \text{ com } D\subsetneq C\,\}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Procedimento completo}
+
+O Algoritmo~\ref{alg:converter} compõe os anteriores no procedimento que a ferramenta executa: a conversão para NNF, seguida da conversão para a forma-alvo e, se solicitado, da simplificação.
+
+\begin{algorithm}[htbp]
+\caption{Conversão completa para CNF ou DNF}\label{alg:converter}
+\begin{algorithmic}[1]
+\Require fórmula $\varphi$, forma-alvo $\in\{\text{CNF},\text{DNF}\}$, limite $L$, indicador de simplificação
+\Ensure forma normal equivalente a $\varphi$, ou sinalização de limite excedido
+\Function{Converter}{$\varphi,\text{alvo},L,\text{simplificar}$}
+  \State $\psi\gets\textsc{Nnf}(\varphi,+)$
+  \If{$\text{alvo}=\text{CNF}$}
+    \State $R\gets\textsc{Cnf}(\psi,L)$
+  \Else
+    \State $R\gets\textsc{Dnf}(\psi,L)$
+  \EndIf
+  \If{simplificar} \State $R\gets\textsc{Simplificar}(R)$ \Comment{na versão dual, se alvo $=$ DNF} \EndIf
+  \State \Return $R$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\chapter{Scripts de Transformação}\label{app:scripts}
 \section{Scripts de Transformação}
 
 \end{document}
