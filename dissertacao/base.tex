@@ -13,14 +13,25 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{booktabs}
+\usepackage{enumitem}
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric}
 
 % (Opcional, mas comum em dissertações)
 \usepackage{amsmath,amssymb,amsthm}
 
 % Ambientes de teorema
-\theoremstyle{plain}
-\newtheorem{proposicao}{Proposição}[chapter]
+% Estilos: o cabeçalho (Definição 1.1, Teorema 1.7...) ocupa uma linha própria
+\newtheoremstyle{tituloplain}{12pt}{12pt}{\itshape}{0pt}{\bfseries}{}{\newline}{\thmname{#1} \thmnumber{#2}\thmnote{ (#3)}}
+\newtheoremstyle{titulodef}{12pt}{12pt}{\normalfont}{0pt}{\bfseries}{}{\newline}{\thmname{#1} \thmnumber{#2}\thmnote{ (#3)}}
+\theoremstyle{tituloplain}
+\newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{proposicao}[teorema]{Proposição}
+\newtheorem{lema}[teorema]{Lema}
+\theoremstyle{titulodef}
+\newtheorem{definicao}[teorema]{Definição}
+\newtheorem{exemplo}[teorema]{Exemplo}
+\setlist[enumerate]{label=(\roman*), leftmargin=2.2em, itemsep=3pt, topsep=4pt}
+\setlist[itemize]{leftmargin=2.2em, itemsep=3pt, topsep=4pt}
 \allowdisplaybreaks
 
 % Algoritmos em pseudocódigo (Apêndice II)
@@ -186,6 +197,7 @@
   \item[coNP] Complemento de NP (classe de complexidade)
   \item[DNF] Disjunctive Normal Form (Forma Normal Disjuntiva)
   \item[DPLL] Davis--Putnam--Logemann--Loveland (algoritmo)
+  \item[FBF] Fórmula Bem Formada (de $\mathrm{FBF}_{\mathrm{prop}}$ e $\mathrm{FBF}_{\mathrm{pred}}$, os conjuntos de fórmulas bem formadas)
   \item[NAND] Negação Conjunta (\textit{Not AND}; traço de Sheffer)
   \item[NNF] Negation Normal Form (Forma Normal Negativa)
   \item[NOR] Negação Disjunta (\textit{Not OR}; seta de Peirce)
@@ -193,6 +205,7 @@
   \item[P] Polynomial time (classe de complexidade)
   \item[PNF] Prenex Normal Form (Forma Normal Prenexa)
   \item[SAT] Boolean Satisfiability Problem (Problema de Satisfazibilidade Booleana)
+  \item[VL] Variáveis Livres (conjunto $\mathrm{VL}(\cdot)$ das variáveis livres de um termo ou fórmula)
 \end{description}
 \clearpage
 
@@ -236,7 +249,7 @@ Foi dentro da tradição algébrica de Boole, Peirce e Schröder que se deram pa
 
 Nesse mesmo período, a lógica de primeira ordem consolidou-se como o quadro de referência da lógica matemática. No livro \textit{Grundzüge der theoretischen Logik} (1928), Hilbert e Ackermann tornaram-na amplamente conhecida e chamaram a atenção para a completude do cálculo de primeira ordem como problema em aberto \cite{hilbertackermann1928,ewald2018}, ao lado do problema da decisão (\textit{Entscheidungsproblem}), que pergunta se há um procedimento mecânico para decidir a validade de uma fórmula \cite{hilbertackermann1928}. Em sua tese, defendida em 1930, Herbrand estabeleceu o resultado que reduz a demonstrabilidade em lógica de primeira ordem à lógica proposicional \cite{herbrand1930,wirth2014}. Em sua formulação moderna, o teorema de Herbrand afirma que uma fórmula skolemizada, em forma prenexa, é insatisfazível se e somente se uma conjunção de instâncias de sua matriz livre de quantificadores o é proposicionalmente \cite{Zach2024Logic}. Esse resultado tem uma consequência decisiva para o tema deste trabalho: ao fim da cadeia prenexação, skolemização e eliminação dos quantificadores, resta uma fórmula proposicional para a qual as formas normais conjuntiva e disjuntiva são o instrumento natural de manipulação.
 
-O último elo desse fio é a resolução. Em 1965, Robinson combinou a unificação de termos com a análise proposicional em uma única regra de inferência, o princípio da resolução, que opera sobre conjuntos de cláusulas \cite{robinson1965,Zach2024Logic}. As cláusulas provêm, justamente, da conversão da matriz de uma fórmula skolemizada para a forma normal conjuntiva \cite{Zach2024Logic}, de modo que a cadeia que vai da prenexa à CNF deixou de ser um recurso metodológico para se tornar o ponto de partida de um procedimento de prova automática, que sucedeu os procedimentos de Davis e Putnam discutidos na Seção~\ref{sec:computacao}. É essa trajetória, de Boole a Robinson, que explica por que as formas normais, nascidas como instrumento de organização da linguagem lógica, vieram a ocupar um lugar central na computação, tema da seção seguinte.
+O último elo desse fio é a resolução. Em 1965, Robinson combinou a unificação de termos com a análise proposicional em uma única regra de inferência, o princípio da resolução, que opera sobre conjuntos de cláusulas \cite{robinson1965,Zach2024Logic}. As cláusulas provêm, justamente, da conversão da matriz de uma fórmula skolemizada para a forma normal conjuntiva (\textit{Conjunctive Normal Form}, CNF) \cite{Zach2024Logic}, de modo que a cadeia que vai da prenexa à CNF deixou de ser um recurso metodológico para se tornar o ponto de partida de um procedimento de prova automática, que sucedeu os procedimentos de Davis e Putnam discutidos na Seção~\ref{sec:computacao}. É essa trajetória, de Boole a Robinson, que explica por que as formas normais, nascidas como instrumento de organização da linguagem lógica, vieram a ocupar um lugar central na computação, tema da seção seguinte.
 
 \section{Desenvolvimento e importância na computação}\label{sec:computacao}
 
@@ -251,13 +264,306 @@ Cabe ainda destacar que a conversão de uma fórmula arbitrária para forma norm
 \section{Definições e propriedades: negativa, conjuntiva, disjuntiva e prenexa}\label{sec:definicoes}
 
 Antes de avançar para os algoritmos de conversão propriamente ditos, no Capítulo~\ref{cap:algoritmos}, é necessário fixar com precisão o que se entende por uma \textit{forma normal} e apresentar as quatro formas que estruturam esta dissertação: a forma normal negativa, a forma normal conjuntiva, a forma normal disjuntiva e a forma normal prenexa. Em termos gerais, uma forma normal é uma representação de uma fórmula lógica que obedece a restrições sintáticas específicas quanto à disposição dos conectivos e, no caso da lógica de primeira ordem, dos quantificadores, preservando a equivalência lógica com a fórmula original \cite{walicki2011}. Cada uma das quatro formas a seguir impõe um conjunto distinto dessas restrições, e é justamente essa diversidade de critérios que torna necessário tratá-las separadamente antes de discutir, na Seção~\ref{sec:completude}, a completude funcional das bases de conectivos que as sustentam.
- 
-A \textbf{forma normal negativa} (\textit{Negation Normal Form}, NNF) constitui o primeiro passo desse processo de normalização. Uma fórmula está em NNF quando os únicos conectivos presentes são a conjunção, a disjunção e a negação, e esta última incide exclusivamente sobre fórmulas atômicas, isto é, quando toda subfórmula negada é um literal \cite{walicki2011}. A obtenção da NNF a partir de uma fórmula arbitrária passa por dois procedimentos sistemáticos: primeiro, a eliminação dos conectivos de implicação e de bicondicional, reescritos em termos de conjunção, disjunção e negação; segundo, o deslocamento das negações para o interior da fórmula por meio das leis de De Morgan e da eliminação da dupla negação, até que restem apenas negações de literais. Toda fórmula da lógica proposicional clássica admite uma NNF equivalente, e essa equivalência garante que as etapas subsequentes — nomeadamente a obtenção das formas conjuntiva e disjuntiva via distributividade — partam de uma estrutura sintática simplificada, preservando integralmente o comportamento semântico (isto é,  o valor de verdade) da fórmula original.
- 
-A partir de uma fórmula em NNF, aplicam-se as leis distributivas da conjunção sobre a disjunção (ou vice-versa) para se obter as formas disjuntiva e conjuntiva, respetivamente. A \textbf{forma normal conjuntiva} (\textit{Conjunctive Normal Form}, CNF) é definida como uma conjunção de cláusulas, em que cada cláusula é, por sua vez, uma disjunção de literais: $\varphi = C_1 \wedge C_2 \wedge \cdots \wedge C_n$, onde cada $C_i = l_1 \vee l_2 \vee \cdots \vee l_k$ e cada $l_j$ é uma variável proposicional ou sua negação. Simetricamente, a \textbf{forma normal disjuntiva} (\textit{Disjunctive Normal Form}, DNF) é definida como uma disjunção de termos, em que cada termo é uma conjunção de literais: $\varphi = D_1 \vee D_2 \vee \cdots \vee D_n$, onde cada $D_i = l_1 \wedge l_2 \wedge \cdots \wedge l_k$. Ambas as formas guardam uma relação de dualidade entre si: a negação de uma fórmula em CNF, reescrita em NNF, resulta em uma fórmula em DNF, e vice-versa. Toda a fórmula da lógica proposicional admite uma CNF e uma DNF equivalentes, o que pode ser demonstrado tanto por indução sobre a estrutura da fórmula a partir da sua NNF quanto de forma construtiva a partir de sua tabela-verdade, tomando a disjunção das conjunções correspondentes às linhas em que a fórmula é verdadeira (para a DNF) ou a conjunção das disjunções correspondentes às linhas em que é falsa (para a CNF) \cite{chang1973}. É importante notar, no entanto, que nem a CNF nem a DNF de uma fórmula são únicas: diferentes sequências de aplicação das leis distributivas e comutativas podem produzir formas conjuntivas ou disjuntivas distintas, ainda que logicamente equivalentes entre si, o que tem implicações diretas para a complexidade computacional discutida na Seção~\ref{sec:computacao} e retomada no Capítulo~\ref{cap:algoritmos}.
- 
-Por fim, a \textbf{forma normal prenexa} (\textit{Prenex Normal Form}, PNF) distingue-se das três anteriores por pertencer ao domínio da lógica de primeira ordem, na qual a presença de quantificadores universais e existenciais exige um tratamento sintático adicional. Uma fórmula está em PNF quando assume a forma $Q_1x_1 \, Q_2x_2 \cdots Q_nx_n \, M$, em que cada $Q_i$ é um quantificador ($\forall$ ou $\exists$) e $M$, chamada de matriz da fórmula, não contém quantificadores. Para que a ideia de uma forma prenexa faça sentido, é preciso dispor de uma linguagem com quantificadores e variáveis ligadas, e esta se deve a Gottlob Frege, que, na \textit{Begriffsschrift} (1879), introduziu o primeiro tratamento formal da quantificação e o conceito de variáveis ligadas \cite{frege1879,ewald2018}. A ideia de reunir todos os quantificadores num prefixo antecedendo uma matriz livre de quantificadores remonta, por sua vez, ao trabalho de Charles Sanders Peirce, que em 1885, no artigo \textit{On the Algebra of Logic: A Contribution to the Philosophy of Notation}, introduziu regras para deslocar os quantificadores para a esquerda da fórmula \cite{peirce1885}. Mais tarde, Löwenheim e Skolem empregaram essa transposição de quantificadores como uma ferramenta poderosa nas demonstrações \cite{lowenheim1915,skolem1920}. Finalmente, em 1928, Hilbert e Ackermann formalizaram a PNF como um teorema geral e a integraram ao seu manual de lógica \cite{hilbertackermann1928}. Assim como ocorre com a NNF, a CNF e a DNF, toda fórmula de primeira ordem é logicamente equivalente a uma fórmula em PNF, obtida por meio de regras de equivalência que permitem mover cada quantificador para fora do escopo dos conectivos proposicionais, com o cuidado de renomear variáveis ligadas sempre que necessário para evitar capturas indevidas. Uma vez em PNF, a matriz $M$ pode ainda ser colocada em CNF ou em DNF, resultando nas chamadas formas normais prenexa conjuntiva e prenexa disjuntiva, respectivamente — uma combinação particularmente relevante para os procedimentos de prova automática de teoremas mencionados na Seção~\ref{sec:computacao}, uma vez que isola, de um lado, a estrutura quantificacional da fórmula e, de outro, sua estrutura proposicional.
- 
+
+Para que essa fixação seja rigorosa, a seção introduz primeiro a linguagem do cálculo proposicional e as formas normais que nela se definem (Subseção~\ref{sec:proposicional}), e depois a linguagem da lógica de primeira ordem e a forma normal prenexa (Subseção~\ref{sec:primeira-ordem}). Em ambos os casos, as definições e os teoremas são numerados e os teoremas são acompanhados das respetivas demonstrações.
+
+\subsection{Linguagem e formas normais no cálculo proposicional}\label{sec:proposicional}
+
+Começa-se pela linguagem do cálculo proposicional.
+
+\begin{definicao}[Sintaxe do cálculo proposicional]\label{def:sintaxe-prop}
+A linguagem do cálculo proposicional é constituída por um conjunto enumerável de \emph{variáveis proposicionais} $\mathcal{P}=\{p,q,r,p_1,p_2,\dots\}$, pelos \emph{conectivos lógicos} $\neg$, $\wedge$, $\vee$, $\rightarrow$ e $\leftrightarrow$, e pelos símbolos auxiliares de pontuação, os parênteses $($ e $)$.
+\end{definicao}
+
+\begin{definicao}[Fórmulas]\label{def:formulas-prop}
+O conjunto $\mathrm{FBF}_{\mathrm{prop}}$ das \emph{fórmulas bem formadas} do cálculo proposicional é o menor conjunto que satisfaz:
+\begin{enumerate}
+  \item se $p\in\mathcal{P}$, então $p\in\mathrm{FBF}_{\mathrm{prop}}$ (as \emph{fórmulas atômicas});
+  \item se $\varphi,\psi\in\mathrm{FBF}_{\mathrm{prop}}$, então $(\neg\varphi)$, $(\varphi\wedge\psi)$, $(\varphi\vee\psi)$, $(\varphi\rightarrow\psi)$ e $(\varphi\leftrightarrow\psi)$ pertencem a $\mathrm{FBF}_{\mathrm{prop}}$.
+\end{enumerate}
+\end{definicao}
+
+Por convenção, omitem-se os parênteses exteriores e os que a precedência usual dos conectivos torna dispensáveis.
+
+\begin{definicao}[Literal, cláusula e termo]\label{def:literal}
+\leavevmode\vspace{-0.6\baselineskip}
+\begin{itemize}
+  \item Um \emph{literal} é uma variável proposicional $p$ (literal positivo) ou a sua negação $\neg p$ (literal negativo). O conjunto dos literais é $\mathcal{L}=\mathcal{P}\cup\{\neg p\mid p\in\mathcal{P}\}$.
+  \item O \emph{complementar} de um literal $\ell$ é denotado por $\overline{\ell}$, com $\overline{p}=\neg p$ e $\overline{\neg p}=p$.
+  \item Uma \emph{cláusula} é uma disjunção finita $l_1\vee l_2\vee\cdots\vee l_k$ de literais, com $k\geq 1$.
+  \item Um \emph{termo} é uma conjunção finita $l_1\wedge l_2\wedge\cdots\wedge l_k$ de literais, com $k\geq 1$.
+\end{itemize}
+\end{definicao}
+
+Todas as formas normais preservam a equivalência lógica da fórmula original, de modo que é preciso precisá-la.
+
+\begin{definicao}[Valoração, equivalência lógica e tautologia]\label{def:equivalencia}
+\leavevmode\vspace{-0.6\baselineskip}
+\begin{itemize}
+  \item Uma \emph{valoração} é uma função $v\colon\mathcal{P}\to\{0,1\}$, estendida a $\mathrm{FBF}_{\mathrm{prop}}$ de acordo com as tabelas-verdade usuais:
+  \begin{align*}
+    v(\neg\varphi)&=1-v(\varphi), & v(\varphi\wedge\psi)&=\min\{v(\varphi),v(\psi)\},\\
+    v(\varphi\vee\psi)&=\max\{v(\varphi),v(\psi)\}, & v(\varphi\rightarrow\psi)&=\max\{1-v(\varphi),v(\psi)\},\\
+    v(\varphi\leftrightarrow\psi)&=\begin{cases}1&\text{se }v(\varphi)=v(\psi),\\0&\text{caso contrário.}\end{cases}
+  \end{align*}
+  \item Duas fórmulas $\varphi$ e $\psi$ são \emph{logicamente equivalentes}, o que se denota por $\varphi\equiv\psi$, se e somente se $v(\varphi)=v(\psi)$ para toda valoração $v$.
+  \item Uma fórmula $\varphi$ é uma \emph{tautologia} se $v(\varphi)=1$ para toda valoração $v$.
+\end{itemize}
+\end{definicao}
+
+Equivalentemente, $\varphi\equiv\psi$ se e somente se $\varphi\leftrightarrow\psi$ é uma tautologia. O símbolo $\equiv$ é, porém, metalinguístico: exprime uma relação entre duas fórmulas (a de terem sempre o mesmo valor de verdade) e não deve ser confundido com o conectivo $\leftrightarrow$, que pertence à linguagem do cálculo proposicional e serve para construir novas fórmulas. Duas propriedades elementares serão usadas adiante: o valor $v(\varphi)$ depende apenas dos valores que $v$ atribui às variáveis que ocorrem em $\varphi$, o que se verifica por indução imediata sobre $\varphi$; e, como o valor de uma fórmula composta depende apenas dos valores de suas componentes imediatas, se $\psi\equiv\psi'$ e $\chi\equiv\chi'$, então $\neg\psi\equiv\neg\psi'$ e $\psi\circ\chi\equiv\psi'\circ\chi'$, para $\circ\in\{\wedge,\vee,\rightarrow,\leftrightarrow\}$.
+
+\begin{lema}[Leis de equivalência]\label{lem:leis}
+Para quaisquer fórmulas $\varphi$, $\psi$ e $\chi$ valem:
+\begin{enumerate}
+  \item $\neg\neg\varphi\equiv\varphi$ (dupla negação);
+  \item $\neg(\varphi\wedge\psi)\equiv\neg\varphi\vee\neg\psi$ e $\neg(\varphi\vee\psi)\equiv\neg\varphi\wedge\neg\psi$ (leis de De Morgan);
+  \item $\varphi\rightarrow\psi\equiv\neg\varphi\vee\psi$ (eliminação da implicação);
+  \item $\varphi\leftrightarrow\psi\equiv(\varphi\rightarrow\psi)\wedge(\psi\rightarrow\varphi)$ (eliminação do bicondicional);
+  \item $\varphi\wedge(\psi\vee\chi)\equiv(\varphi\wedge\psi)\vee(\varphi\wedge\chi)$ e $\varphi\vee(\psi\wedge\chi)\equiv(\varphi\vee\psi)\wedge(\varphi\vee\chi)$ (leis distributivas).
+\end{enumerate}
+\end{lema}
+\begin{proof}
+Cada lei envolve no máximo três variáveis, de modo que basta verificar, para as no máximo oito atribuições de valores a $\varphi$, $\psi$ e $\chi$, que os dois lados têm o mesmo valor, o que é um cálculo direto com as tabelas-verdade da Definição~\ref{def:equivalencia}. Por exemplo, para (ii), se $v(\varphi)=v(\psi)=1$, então $v(\neg(\varphi\wedge\psi))=0=\max\{0,0\}=v(\neg\varphi\vee\neg\psi)$, e, se ao menos um dos valores é $0$, ambos os lados valem $1$.
+\end{proof}
+
+\paragraph{Forma normal negativa.} A \textbf{forma normal negativa} (\textit{Negation Normal Form}, NNF) constitui o primeiro passo do processo de normalização.
+
+\begin{definicao}[Forma normal negativa]\label{def:nnf}
+O conjunto das fórmulas em \emph{forma normal negativa} (NNF) é o menor conjunto tal que:
+\begin{enumerate}
+  \item todo literal está em NNF;
+  \item se $\varphi$ e $\psi$ estão em NNF, então $(\varphi\wedge\psi)$ e $(\varphi\vee\psi)$ estão em NNF.
+\end{enumerate}
+Equivalentemente, uma fórmula está em NNF quando os únicos conectivos presentes são $\neg$, $\wedge$ e $\vee$, e a negação incide exclusivamente sobre variáveis proposicionais \cite{walicki2011}.
+\end{definicao}
+
+A obtenção da NNF a partir de uma fórmula arbitrária passa por dois procedimentos sistemáticos: primeiro, a eliminação dos conectivos de implicação e de bicondicional, reescritos em termos de conjunção, disjunção e negação; segundo, o deslocamento das negações para o interior da fórmula por meio das leis de De Morgan e da eliminação da dupla negação, até que restem apenas negações de literais. O teorema seguinte garante que esse processo é sempre possível.
+
+\begin{teorema}[Existência de NNF equivalente]\label{teo:nnf}
+Para toda fórmula $\varphi\in\mathrm{FBF}_{\mathrm{prop}}$ existe uma fórmula $\psi$ em NNF tal que $\varphi\equiv\psi$.
+\end{teorema}
+\begin{proof}
+Prova-se, por indução sobre a estrutura de $\varphi$, a afirmação mais forte de que existem fórmulas $\varphi^{+}$ e $\varphi^{-}$ em NNF tais que $\varphi^{+}\equiv\varphi$ e $\varphi^{-}\equiv\neg\varphi$; o teorema é o caso de $\varphi^{+}$. Todas as equivalências abaixo decorrem do Lema~\ref{lem:leis} e da compatibilidade da equivalência com os conectivos, observada acima.
+
+\emph{Caso atômico.} Se $\varphi=p$, tomam-se $\varphi^{+}=p$ e $\varphi^{-}=\neg p$, que são literais e, portanto, estão em NNF.
+
+\emph{Negação.} Se $\varphi=\neg\psi$, tomam-se $\varphi^{+}=\psi^{-}\equiv\neg\psi$ e $\varphi^{-}=\psi^{+}\equiv\psi\equiv\neg\neg\psi$, pela hipótese de indução e pela lei (i).
+
+\emph{Conjunção e disjunção.} Se $\varphi=\psi\wedge\chi$, tomam-se $\varphi^{+}=\psi^{+}\wedge\chi^{+}\equiv\psi\wedge\chi$ e $\varphi^{-}=\psi^{-}\vee\chi^{-}\equiv\neg\psi\vee\neg\chi\equiv\neg(\psi\wedge\chi)$, pela lei (ii). Se $\varphi=\psi\vee\chi$, tomam-se $\varphi^{+}=\psi^{+}\vee\chi^{+}$ e $\varphi^{-}=\psi^{-}\wedge\chi^{-}\equiv\neg\psi\wedge\neg\chi\equiv\neg(\psi\vee\chi)$.
+
+\emph{Implicação.} Se $\varphi=\psi\rightarrow\chi$, tomam-se $\varphi^{+}=\psi^{-}\vee\chi^{+}\equiv\neg\psi\vee\chi\equiv\psi\rightarrow\chi$, pela lei (iii), e $\varphi^{-}=\psi^{+}\wedge\chi^{-}\equiv\psi\wedge\neg\chi\equiv\neg(\psi\rightarrow\chi)$, pelas leis (iii), (ii) e (i).
+
+\emph{Bicondicional.} Se $\varphi=\psi\leftrightarrow\chi$, tomam-se $\varphi^{+}=(\psi^{-}\vee\chi^{+})\wedge(\chi^{-}\vee\psi^{+})\equiv(\psi\rightarrow\chi)\wedge(\chi\rightarrow\psi)\equiv\psi\leftrightarrow\chi$, pelas leis (iii) e (iv), e $\varphi^{-}=(\psi^{+}\wedge\chi^{-})\vee(\chi^{+}\wedge\psi^{-})$. Este último vale $1$ numa valoração se e somente se $\psi$ e $\chi$ têm valores distintos, isto é, se e somente se $\neg(\psi\leftrightarrow\chi)$ vale $1$.
+
+Em cada caso, $\varphi^{+}$ e $\varphi^{-}$ foram construídas a partir de fórmulas em NNF unicamente com $\wedge$ e $\vee$, e portanto estão em NNF.
+\end{proof}
+
+O Teorema~\ref{teo:nnf} garante que as etapas subsequentes, nomeadamente a obtenção das formas conjuntiva e disjuntiva via distributividade, partam de uma estrutura sintática simplificada, preservando integralmente o comportamento semântico, isto é, o valor de verdade, da fórmula original. A construção da demonstração é, de resto, o algoritmo de conversão para NNF com polaridade que será analisado na Seção~\ref{sec:correcao-complexidade}.
+
+\paragraph{Formas normais conjuntiva e disjuntiva.} A partir de uma fórmula em NNF, aplicam-se as leis distributivas da conjunção sobre a disjunção (ou vice-versa) para se obter as formas disjuntiva e conjuntiva, respetivamente.
+
+\begin{definicao}[Formas normais conjuntiva e disjuntiva]\label{def:cnf-dnf}
+\leavevmode\vspace{-0.6\baselineskip}
+\begin{itemize}
+  \item Uma fórmula está em \emph{forma normal conjuntiva} (\textit{Conjunctive Normal Form}, CNF) se é uma conjunção finita de cláusulas, $\varphi=C_1\wedge C_2\wedge\cdots\wedge C_m$, com $m\geq 1$.
+  \item Uma fórmula está em \emph{forma normal disjuntiva} (\textit{Disjunctive Normal Form}, DNF) se é uma disjunção finita de termos, $\varphi=D_1\vee D_2\vee\cdots\vee D_m$, com $m\geq 1$.
+\end{itemize}
+\end{definicao}
+
+Ambas as formas guardam uma relação de dualidade entre si: a negação de uma fórmula em CNF, reescrita em NNF, resulta em uma fórmula em DNF, e vice-versa. O teorema seguinte estabelece que toda fórmula admite uma CNF e uma DNF equivalentes.
+
+\begin{teorema}[Existência de CNF e DNF equivalentes]\label{teo:cnf-dnf}
+Para toda fórmula $\varphi\in\mathrm{FBF}_{\mathrm{prop}}$ existem uma fórmula $\psi_{\mathrm{CNF}}$ em CNF e uma fórmula $\psi_{\mathrm{DNF}}$ em DNF tais que $\varphi\equiv\psi_{\mathrm{CNF}}$ e $\varphi\equiv\psi_{\mathrm{DNF}}$.
+\end{teorema}
+\begin{proof}
+A prova é construtiva, a partir da tabela-verdade \cite{chang1973}. Sejam $p_1,\dots,p_n$, com $n\geq 1$, as variáveis que ocorrem em $\varphi$. Para cada atribuição $a\in\{0,1\}^n$ de valores a essas variáveis, definem-se o termo $D_a=l_1\wedge\cdots\wedge l_n$ e a cláusula $C_a=l'_1\vee\cdots\vee l'_n$, onde $l_i=p_i$ e $l'_i=\neg p_i$ se $a_i=1$, e $l_i=\neg p_i$ e $l'_i=p_i$ se $a_i=0$. Dada uma valoração $v$, escreva-se $a(v)=(v(p_1),\dots,v(p_n))$. Então $v(D_a)=1$ se e somente se $a(v)=a$, e $v(C_a)=0$ se e somente se $a(v)=a$. Seja $T$ o conjunto das atribuições $a$ para as quais $\varphi$ vale $1$ e $F$ o das atribuições para as quais $\varphi$ vale $0$, o que faz sentido porque $v(\varphi)$ depende apenas de $a(v)$.
+
+\emph{DNF.} Se $T\neq\emptyset$, tome-se $\psi_{\mathrm{DNF}}=\bigvee_{a\in T}D_a$; se $T=\emptyset$, tome-se $\psi_{\mathrm{DNF}}=p_1\wedge\neg p_1$. No primeiro caso, $v(\psi_{\mathrm{DNF}})=1$ se e somente se $a(v)\in T$, isto é, se e somente se $v(\varphi)=1$; no segundo, ambas as fórmulas valem $0$ em toda valoração.
+
+\emph{CNF.} Se $F\neq\emptyset$, tome-se $\psi_{\mathrm{CNF}}=\bigwedge_{a\in F}C_a$; se $F=\emptyset$, tome-se $\psi_{\mathrm{CNF}}=p_1\vee\neg p_1$. No primeiro caso, $v(\psi_{\mathrm{CNF}})=0$ se e somente se $a(v)\in F$, isto é, se e somente se $v(\varphi)=0$; no segundo, ambas as fórmulas valem $1$ em toda valoração.
+
+Em todos os casos, $\psi_{\mathrm{DNF}}$ é uma disjunção de termos e $\psi_{\mathrm{CNF}}$ é uma conjunção de cláusulas.
+\end{proof}
+
+O mesmo resultado pode ser obtido por indução sobre a estrutura da fórmula a partir de sua NNF, aplicando-se as leis distributivas do Lema~\ref{lem:leis}; é essa a via que dá origem aos algoritmos de conversão estudados na Seção~\ref{sec:revisao-metodos}. É importante notar, no entanto, que nem a CNF nem a DNF de uma fórmula são únicas: diferentes sequências de aplicação das leis distributivas e comutativas podem produzir formas conjuntivas ou disjuntivas distintas, ainda que logicamente equivalentes entre si, o que tem implicações diretas para a complexidade computacional discutida na Seção~\ref{sec:computacao} e retomada no Capítulo~\ref{cap:algoritmos}.
+
+\paragraph{Equissatisfazibilidade.} Nem todas as transformações discutidas neste trabalho preservam a equivalência lógica; algumas preservam apenas a satisfazibilidade, noção que convém fixar desde já.
+
+\begin{definicao}[Satisfazibilidade e equissatisfazibilidade]\label{def:equissat}
+Uma fórmula $\varphi$ é \emph{satisfazível} se existe uma valoração $v$ tal que $v(\varphi)=1$. Duas fórmulas $\varphi$ e $\psi$ são \emph{equissatisfazíveis}, o que se denota por $\varphi\approx_{\mathrm{SAT}}\psi$, se $\varphi$ é satisfazível se e somente se $\psi$ é satisfazível.
+\end{definicao}
+
+A equivalência implica a equissatisfazibilidade, mas não o contrário: $p$ e $q$ são ambas satisfazíveis, e portanto equissatisfazíveis, sem serem equivalentes. A distinção será decisiva na Seção~\ref{sec:limitacoes}, a propósito da skolemização e da transformação de Tseitin.
+
+\begin{exemplo}[Passagem à NNF, à DNF e à CNF]\label{ex:conversao}
+Seja $\varphi=(p\leftrightarrow q)\rightarrow r$. Eliminando as implicações e os bicondicionais e deslocando as negações até os literais, obtém-se
+\begin{align*}
+(p\leftrightarrow q)\rightarrow r
+&\equiv\neg(p\leftrightarrow q)\vee r &&\text{(lei (iii))}\\
+&\equiv\neg\bigl((p\rightarrow q)\wedge(q\rightarrow p)\bigr)\vee r &&\text{(lei (iv))}\\
+&\equiv\neg\bigl((\neg p\vee q)\wedge(\neg q\vee p)\bigr)\vee r &&\text{(lei (iii), duas vezes)}\\
+&\equiv\bigl(\neg(\neg p\vee q)\vee\neg(\neg q\vee p)\bigr)\vee r &&\text{(lei (ii))}\\
+&\equiv\bigl((p\wedge\neg q)\vee(q\wedge\neg p)\bigr)\vee r &&\text{(leis (ii) e (i))}.
+\end{align*}
+A última fórmula está em NNF. Pela associatividade da disjunção, ela é também uma DNF, $(p\wedge\neg q)\vee(\neg p\wedge q)\vee r$, com três termos. Para obter a CNF, distribui-se $\vee$ sobre $\wedge$ (lei (v)):
+\begin{align*}
+(p\wedge\neg q)\vee(\neg p\wedge q)\vee r
+&\equiv(p\vee\neg p\vee r)\wedge(p\vee q\vee r)\wedge(\neg q\vee\neg p\vee r)\wedge(\neg q\vee q\vee r).
+\end{align*}
+A primeira e a quarta cláusulas são tautologias, pois contêm um literal e o seu complementar, e podem ser eliminadas sem alterar o valor da conjunção, o que fornece a CNF $(p\vee q\vee r)\wedge(\neg p\vee\neg q\vee r)$. Como confirmação, $\varphi$ vale $0$ exatamente nas valorações $(p,q,r)=(1,1,0)$ e $(0,0,0)$, as únicas que falsificam alguma cláusula da CNF obtida.
+\end{exemplo}
+
+O exemplo mostra o encadeamento que a ferramenta descrita no Capítulo~\ref{cap:ferramenta} deverá reproduzir: a eliminação de $\rightarrow$ e $\leftrightarrow$, o deslocamento das negações, a distributividade e, opcionalmente, a eliminação de cláusulas tautológicas, com a lei aplicada identificada em cada passo.
+
+\subsection{Linguagem e forma normal prenexa no cálculo de predicados}\label{sec:primeira-ordem}
+
+A passagem à lógica de primeira ordem exige uma linguagem mais rica, com termos, predicados e quantificadores. Para que a ideia de uma forma prenexa faça sentido, é preciso dispor de uma linguagem com quantificadores e variáveis ligadas, e esta se deve a Gottlob Frege, que, na \textit{Begriffsschrift} (1879), introduziu o primeiro tratamento formal da quantificação e o conceito de variáveis ligadas \cite{frege1879,ewald2018}.
+
+\begin{definicao}[Linguagem de primeira ordem]\label{def:linguagem-fo}
+Uma \emph{linguagem de primeira ordem} é definida por uma assinatura $\Sigma=(\mathcal{C},\mathcal{F},\mathcal{R})$ e pelos seguintes elementos:
+\begin{itemize}
+  \item $\mathcal{C}$ é um conjunto de símbolos de \emph{constante};
+  \item $\mathcal{F}$ é um conjunto de símbolos de \emph{função}, cada um com uma aridade $n\geq 1$;
+  \item $\mathcal{R}$ é um conjunto de símbolos de \emph{relação} (ou \emph{predicado}), cada um com uma aridade $n\geq 1$;
+  \item $\mathcal{V}=\{x,y,z,\dots\}$ é um conjunto infinito enumerável de \emph{variáveis individuais};
+  \item os \emph{quantificadores} $\forall$ (universal) e $\exists$ (existencial);
+  \item os \emph{conectivos} $\neg$, $\wedge$, $\vee$, $\rightarrow$ e $\leftrightarrow$, e os parênteses.
+\end{itemize}
+Por simplicidade, não se considera a igualdade, que não é necessária para o que segue.
+\end{definicao}
+
+\begin{definicao}[Termos]\label{def:termos}
+O conjunto $\mathcal{T}$ dos \emph{termos} é o menor conjunto tal que:
+\begin{enumerate}
+  \item toda variável $x\in\mathcal{V}$ e toda constante $c\in\mathcal{C}$ é um termo;
+  \item se $f\in\mathcal{F}$ tem aridade $n$ e $t_1,\dots,t_n\in\mathcal{T}$, então $f(t_1,\dots,t_n)\in\mathcal{T}$.
+\end{enumerate}
+\end{definicao}
+
+\begin{definicao}[Fórmulas de primeira ordem]\label{def:formulas-fo}
+O conjunto $\mathrm{FBF}_{\mathrm{pred}}$ das \emph{fórmulas} de uma linguagem de primeira ordem é o menor conjunto tal que:
+\begin{enumerate}
+  \item se $R\in\mathcal{R}$ tem aridade $n$ e $t_1,\dots,t_n\in\mathcal{T}$, então $R(t_1,\dots,t_n)\in\mathrm{FBF}_{\mathrm{pred}}$ (as \emph{fórmulas atômicas});
+  \item se $\varphi\in\mathrm{FBF}_{\mathrm{pred}}$, então $(\neg\varphi)\in\mathrm{FBF}_{\mathrm{pred}}$;
+  \item se $\varphi,\psi\in\mathrm{FBF}_{\mathrm{pred}}$, então $(\varphi\wedge\psi)$, $(\varphi\vee\psi)$, $(\varphi\rightarrow\psi)$ e $(\varphi\leftrightarrow\psi)$ pertencem a $\mathrm{FBF}_{\mathrm{pred}}$;
+  \item se $\varphi\in\mathrm{FBF}_{\mathrm{pred}}$ e $x\in\mathcal{V}$, então $(\forall x\,\varphi)$ e $(\exists x\,\varphi)$ pertencem a $\mathrm{FBF}_{\mathrm{pred}}$.
+\end{enumerate}
+\end{definicao}
+
+\begin{definicao}[Variáveis livres, variáveis ligadas e sentenças]\label{def:variaveis}
+\leavevmode\vspace{-0.6\baselineskip}
+\begin{itemize}
+  \item O conjunto $\mathrm{VL}(t)$ das \emph{variáveis livres} de um termo $t$ é dado por $\mathrm{VL}(x)=\{x\}$, $\mathrm{VL}(c)=\emptyset$ e $\mathrm{VL}(f(t_1,\dots,t_n))=\mathrm{VL}(t_1)\cup\cdots\cup\mathrm{VL}(t_n)$.
+  \item O conjunto $\mathrm{VL}(\varphi)$ das variáveis livres de uma fórmula $\varphi$ é dado por:
+  \begin{align*}
+    \mathrm{VL}(R(t_1,\dots,t_n))&=\mathrm{VL}(t_1)\cup\cdots\cup\mathrm{VL}(t_n),\\
+    \mathrm{VL}(\neg\varphi)&=\mathrm{VL}(\varphi),\\
+    \mathrm{VL}(\varphi\circ\psi)&=\mathrm{VL}(\varphi)\cup\mathrm{VL}(\psi),\quad\text{para }\circ\in\{\wedge,\vee,\rightarrow,\leftrightarrow\},\\
+    \mathrm{VL}(\forall x\,\varphi)&=\mathrm{VL}(\exists x\,\varphi)=\mathrm{VL}(\varphi)\setminus\{x\}.
+  \end{align*}
+  \item Uma ocorrência de uma variável $x$ em $\varphi$ é \emph{ligada} se ocorre no escopo de um quantificador $\forall x$ ou $\exists x$, ou como variável do próprio quantificador, e \emph{livre} caso contrário. Uma variável pode, portanto, ocorrer livre e ligada na mesma fórmula, em subfórmulas distintas.
+  \item Uma fórmula $\varphi$ é \emph{fechada}, ou uma \emph{sentença}, se $\mathrm{VL}(\varphi)=\emptyset$.
+\end{itemize}
+\end{definicao}
+
+A noção de equivalência lógica, que na Subseção~\ref{sec:proposicional} se definiu por meio de valorações, requer agora uma semântica para as fórmulas de primeira ordem.
+
+\begin{definicao}[Estrutura, satisfação e equivalência]\label{def:semantica-fo}
+\leavevmode\vspace{-0.6\baselineskip}
+\begin{itemize}
+  \item Uma \emph{estrutura} $\mathfrak{A}$ para a assinatura $\Sigma$ consiste em um conjunto não vazio $A$, o \emph{domínio}, e em uma interpretação que associa a cada constante $c$ um elemento $c^{\mathfrak{A}}\in A$, a cada símbolo de função $f$ de aridade $n$ uma função $f^{\mathfrak{A}}\colon A^n\to A$ e a cada símbolo de relação $R$ de aridade $n$ uma relação $R^{\mathfrak{A}}\subseteq A^n$.
+  \item Uma \emph{atribuição} é uma função $s\colon\mathcal{V}\to A$. Escreve-se $s[x\mapsto a]$ para a atribuição que coincide com $s$, exceto por associar $a$ a $x$.
+  \item O \emph{valor} de um termo é definido por $x^{\mathfrak{A}}[s]=s(x)$, $c^{\mathfrak{A}}[s]=c^{\mathfrak{A}}$ e $f(t_1,\dots,t_n)^{\mathfrak{A}}[s]=f^{\mathfrak{A}}(t_1^{\mathfrak{A}}[s],\dots,t_n^{\mathfrak{A}}[s])$.
+  \item A relação de \emph{satisfação} $\mathfrak{A}\models\varphi[s]$ é definida por indução sobre $\varphi$:
+  \begin{itemize}
+    \item $\mathfrak{A}\models R(t_1,\dots,t_n)[s]$ se e somente se $(t_1^{\mathfrak{A}}[s],\dots,t_n^{\mathfrak{A}}[s])\in R^{\mathfrak{A}}$;
+    \item os conectivos são tratados pelas tabelas-verdade usuais;
+    \item $\mathfrak{A}\models(\forall x\,\varphi)[s]$ se e somente se $\mathfrak{A}\models\varphi[s[x\mapsto a]]$ para todo $a\in A$;
+    \item $\mathfrak{A}\models(\exists x\,\varphi)[s]$ se e somente se $\mathfrak{A}\models\varphi[s[x\mapsto a]]$ para algum $a\in A$.
+  \end{itemize}
+  \item Duas fórmulas $\varphi$ e $\psi$ são \emph{logicamente equivalentes}, $\varphi\equiv\psi$, se $\mathfrak{A}\models\varphi[s]$ se e somente se $\mathfrak{A}\models\psi[s]$, para toda estrutura $\mathfrak{A}$ e toda atribuição $s$.
+\end{itemize}
+\end{definicao}
+
+Que o domínio seja não vazio é uma convenção padrão, da qual dependem algumas das equivalências usadas adiante. Os três lemas seguintes reúnem os resultados técnicos de que a demonstração principal necessita.
+
+\begin{lema}[Coincidência]\label{lem:coincidencia}
+Se as atribuições $s$ e $s'$ coincidem em $\mathrm{VL}(\varphi)$, então $\mathfrak{A}\models\varphi[s]$ se e somente se $\mathfrak{A}\models\varphi[s']$.
+\end{lema}
+\begin{proof}
+Por indução sobre $\varphi$. Para as fórmulas atômicas, o valor de um termo depende apenas dos valores atribuídos às suas variáveis, e os casos dos conectivos decorrem imediatamente da hipótese de indução. Se $\varphi=\forall x\,\psi$ (o caso de $\exists$ é análogo), então, para cada $a\in A$, as atribuições $s[x\mapsto a]$ e $s'[x\mapsto a]$ coincidem em $\mathrm{VL}(\psi)\subseteq\mathrm{VL}(\varphi)\cup\{x\}$, e a hipótese de indução conclui.
+\end{proof}
+
+\begin{lema}[Renomeação de variáveis ligadas]\label{lem:renomeacao}
+Seja $\varphi[y/x]$ o resultado de substituir cada ocorrência livre de $x$ em $\varphi$ por $y$. Se $y$ não ocorre em $\varphi$, então $\forall x\,\varphi\equiv\forall y\,\varphi[y/x]$ e $\exists x\,\varphi\equiv\exists y\,\varphi[y/x]$.
+\end{lema}
+\begin{proof}
+Por indução sobre $\varphi$, e como $y$ não ocorre em $\varphi$, vale o lema da substituição: $\mathfrak{A}\models\varphi[y/x][s]$ se e somente se $\mathfrak{A}\models\varphi[s[x\mapsto s(y)]]$. Logo, $\mathfrak{A}\models(\forall y\,\varphi[y/x])[s]$ se e somente se, para todo $a\in A$, $\mathfrak{A}\models\varphi[s[y\mapsto a][x\mapsto a]]$. As atribuições $s[y\mapsto a][x\mapsto a]$ e $s[x\mapsto a]$ diferem apenas em $y$, que não ocorre em $\varphi$, e pelo Lema~\ref{lem:coincidencia} podem ser trocadas uma pela outra. Assim, a condição equivale a $\mathfrak{A}\models(\forall x\,\varphi)[s]$. O caso de $\exists$ é análogo.
+\end{proof}
+
+\begin{lema}[Deslocamento de quantificadores]\label{lem:deslocamento}
+Sejam $\varphi$ e $\psi$ fórmulas. Valem:
+\begin{enumerate}
+  \item $\neg\forall x\,\varphi\equiv\exists x\,\neg\varphi$ e $\neg\exists x\,\varphi\equiv\forall x\,\neg\varphi$ (sem restrição sobre $x$);
+  \item se $x\notin\mathrm{VL}(\psi)$: $(\forall x\,\varphi)\wedge\psi\equiv\forall x\,(\varphi\wedge\psi)$ e $(\exists x\,\varphi)\wedge\psi\equiv\exists x\,(\varphi\wedge\psi)$;
+  \item se $x\notin\mathrm{VL}(\psi)$: $(\forall x\,\varphi)\vee\psi\equiv\forall x\,(\varphi\vee\psi)$ e $(\exists x\,\varphi)\vee\psi\equiv\exists x\,(\varphi\vee\psi)$;
+  \item se $x\notin\mathrm{VL}(\varphi)$: $\forall x\,\varphi\equiv\varphi\equiv\exists x\,\varphi$.
+\end{enumerate}
+\end{lema}
+\begin{proof}
+Fixem-se $\mathfrak{A}$ e $s$. Para (i), $\mathfrak{A}\models(\neg\forall x\,\varphi)[s]$ se e somente se existe $a\in A$ com $\mathfrak{A}\not\models\varphi[s[x\mapsto a]]$, isto é, se e somente se $\mathfrak{A}\models(\exists x\,\neg\varphi)[s]$; o outro caso é análogo. Para (ii), com $\forall$: pelo Lema~\ref{lem:coincidencia} e porque $x\notin\mathrm{VL}(\psi)$, tem-se $\mathfrak{A}\models\psi[s[x\mapsto a]]$ se e somente se $\mathfrak{A}\models\psi[s]$, para todo $a$. Logo, $\mathfrak{A}\models\forall x\,(\varphi\wedge\psi)[s]$ se e somente se $\mathfrak{A}\models\varphi[s[x\mapsto a]]$ para todo $a$ e $\mathfrak{A}\models\psi[s]$, pois $A\neq\emptyset$, o que equivale a $\mathfrak{A}\models((\forall x\,\varphi)\wedge\psi)[s]$. Com $\exists$, existe $a$ com $\mathfrak{A}\models\varphi[s[x\mapsto a]]$ e $\mathfrak{A}\models\psi[s]$ se e somente se isso vale para $\exists x\,\varphi$ e para $\psi$ separadamente. O caso (iii) é análogo. Quanto a (iv), se $x\notin\mathrm{VL}(\varphi)$, então, pelo Lema~\ref{lem:coincidencia}, $\mathfrak{A}\models\varphi[s[x\mapsto a]]$ se e somente se $\mathfrak{A}\models\varphi[s]$, para todo $a\in A$, e como $A\neq\emptyset$ conclui-se que $\forall x\,\varphi$ e $\exists x\,\varphi$ são satisfeitas por $s$ se e somente se $\varphi$ o é.
+\end{proof}
+
+Resta precisar a forma que se quer atingir.
+
+\begin{definicao}[Forma normal prenexa]\label{def:pnf}
+Uma fórmula $\Phi\in\mathrm{FBF}_{\mathrm{pred}}$ está em \emph{forma normal prenexa} (\textit{Prenex Normal Form}, PNF) se $\Phi=Q_1x_1\,Q_2x_2\cdots Q_nx_n\,M$, com $n\geq 0$, onde:
+\begin{enumerate}
+  \item cada $Q_i\in\{\forall,\exists\}$;
+  \item as variáveis $x_1,\dots,x_n$ são distintas duas a duas;
+  \item a sequência $Q_1x_1\cdots Q_nx_n$ é o \emph{prefixo} da fórmula;
+  \item a subfórmula $M$, chamada de \emph{matriz}, não contém quantificadores.
+\end{enumerate}
+\end{definicao}
+
+A ideia de reunir todos os quantificadores num prefixo antecedendo uma matriz livre de quantificadores remonta, por sua vez, ao trabalho de Charles Sanders Peirce, que em 1885, no artigo \textit{On the Algebra of Logic: A Contribution to the Philosophy of Notation}, introduziu regras para deslocar os quantificadores para a esquerda da fórmula \cite{peirce1885}. Mais tarde, Löwenheim e Skolem empregaram essa transposição de quantificadores como uma ferramenta poderosa nas demonstrações \cite{lowenheim1915,skolem1920}. Finalmente, em 1928, Hilbert e Ackermann formalizaram a PNF como um teorema geral e a integraram ao seu manual de lógica \cite{hilbertackermann1928}. Assim como ocorre com a NNF, a CNF e a DNF, toda fórmula de primeira ordem é logicamente equivalente a uma fórmula em PNF, o que se demonstra a seguir.
+
+\begin{teorema}[Existência de PNF]\label{teo:pnf}
+Para toda fórmula $\varphi\in\mathrm{FBF}_{\mathrm{pred}}$ existe uma fórmula $\Phi$ em PNF tal que $\varphi\equiv\Phi$.
+\end{teorema}
+\begin{proof}
+Se $\theta\equiv\theta'$, a substituição de uma ocorrência de $\theta$ por $\theta'$ em uma fórmula produz uma fórmula equivalente, o que se verifica por indução sobre a fórmula, pois o valor de uma fórmula composta depende apenas dos valores de suas componentes. Por isso, as equivalências do Lema~\ref{lem:leis}, que valem também para fórmulas de primeira ordem, com a mesma prova, e as do Lema~\ref{lem:deslocamento} podem ser aplicadas a subfórmulas. Em particular, pelas leis (iii) e (iv) do Lema~\ref{lem:leis}, pode-se substituir $\rightarrow$ e $\leftrightarrow$ por $\neg$, $\wedge$ e $\vee$. Basta, portanto, provar o teorema para as fórmulas construídas apenas com $\neg$, $\wedge$, $\vee$, $\forall$ e $\exists$, o que se faz por indução sobre a estrutura da fórmula.
+
+\emph{Caso atômico.} Uma fórmula atômica é uma PNF com prefixo vazio.
+
+\emph{Negação.} Seja $\varphi=\neg\psi$. Pela hipótese de indução, $\psi\equiv Q_1x_1\cdots Q_nx_n\,M$, em PNF. Aplicando $n$ vezes o Lema~\ref{lem:deslocamento}(i), de dentro para fora, obtém-se $\neg\psi\equiv\overline{Q}_1x_1\cdots\overline{Q}_nx_n\,\neg M$, onde $\overline{\forall}=\exists$ e $\overline{\exists}=\forall$. O resultado está em PNF, pois $\neg M$ não contém quantificadores.
+
+\emph{Quantificação.} Seja $\varphi=\forall x\,\psi$ (o caso de $\exists$ é idêntico). Pela hipótese de indução, $\psi\equiv\Phi_\psi=Q_1x_1\cdots Q_nx_n\,M$, e portanto $\varphi\equiv\forall x\,\Phi_\psi$. Se $x$ não é nenhuma das $x_i$, a fórmula $\forall x\,\Phi_\psi$ está em PNF. Se $x=x_i$, então $x\notin\mathrm{VL}(\Phi_\psi)$, porque as variáveis do prefixo são distintas e toda ocorrência de $x_i$ em $M$ está no escopo de $Q_ix_i$; pelo Lema~\ref{lem:deslocamento}(iv), $\forall x\,\Phi_\psi\equiv\Phi_\psi$, que está em PNF.
+
+\emph{Conjunção.} Seja $\varphi=\psi\wedge\chi$, com $\psi\equiv Q_1x_1\cdots Q_nx_n\,M_1$ e $\chi\equiv Q'_1y_1\cdots Q'_my_m\,M_2$, ambas em PNF. Escolham-se variáveis $z_1,\dots,z_n,w_1,\dots,w_m$, distintas duas a duas e que não ocorrem em nenhuma das duas fórmulas, o que é possível porque $\mathcal{V}$ é infinito. Aplicando o Lema~\ref{lem:renomeacao} a cada quantificador, de fora para dentro, obtém-se que $\psi\equiv Q_1z_1\cdots Q_nz_n\,M_1'$ e $\chi\equiv Q'_1w_1\cdots Q'_mw_m\,M_2'$, onde $M_1'$ e $M_2'$ resultam de $M_1$ e $M_2$ por renomeação. Denotem-se por $\psi'$ e $\chi'$ essas duas fórmulas. Como $z_1\notin\mathrm{VL}(\chi')$, o Lema~\ref{lem:deslocamento}(ii) permite deslocar $Q_1z_1$ para fora da conjunção $\psi'\wedge\chi'$; repetindo o argumento para $Q_2z_2,\dots,Q_nz_n$ e depois, pela comutatividade de $\wedge$, para $Q'_1w_1,\dots,Q'_mw_m$ (cujas variáveis não ocorrem em $M_1'$), chega-se a $\varphi\equiv Q_1z_1\cdots Q_nz_n\,Q'_1w_1\cdots Q'_mw_m\,(M_1'\wedge M_2')$. As variáveis do prefixo são distintas e $M_1'\wedge M_2'$ não contém quantificadores, de modo que a fórmula está em PNF.
+
+\emph{Disjunção.} O caso $\varphi=\psi\vee\chi$ é idêntico ao anterior, usando o Lema~\ref{lem:deslocamento}(iii) em lugar de (ii).
+
+Fica assim demonstrado o teorema, pela indução sobre a estrutura da fórmula.
+\end{proof}
+
+A demonstração é construtiva: o procedimento que dela se extrai é exatamente o de deslocamento sucessivo de quantificadores, precedido da renomeação de variáveis ligadas, cuja correção e cujo custo serão analisados na Seção~\ref{sec:correcao-complexidade}.
+
+\begin{exemplo}[Passagem à PNF]\label{ex:pnf}
+Seja $\varphi=(\forall x\,P(x))\rightarrow(\exists y\,Q(y))$. Então
+\begin{align*}
+(\forall x\,P(x))\rightarrow(\exists y\,Q(y))
+&\equiv\neg\forall x\,P(x)\vee\exists y\,Q(y) &&\text{(Lema~\ref{lem:leis}(iii))}\\
+&\equiv\exists x\,\neg P(x)\vee\exists y\,Q(y) &&\text{(Lema~\ref{lem:deslocamento}(i))}\\
+&\equiv\exists x\,\bigl(\neg P(x)\vee\exists y\,Q(y)\bigr) &&\text{(Lema~\ref{lem:deslocamento}(iii), pois } x\notin\mathrm{VL}(\exists y\,Q(y)))\\
+&\equiv\exists x\,\exists y\,\bigl(\neg P(x)\vee Q(y)\bigr) &&\text{(Lema~\ref{lem:deslocamento}(iii), pois } y\notin\mathrm{VL}(\neg P(x))).
+\end{align*}
+A última fórmula está em PNF, com prefixo $\exists x\,\exists y$ e matriz $\neg P(x)\vee Q(y)$.
+\end{exemplo}
+
+Uma vez em PNF, a matriz $M$ pode ainda ser colocada em CNF ou em DNF, pelo Teorema~\ref{teo:cnf-dnf}, resultando nas chamadas formas normais prenexa conjuntiva e prenexa disjuntiva, respetivamente. No Exemplo~\ref{ex:pnf}, a matriz $\neg P(x)\vee Q(y)$ é já uma cláusula, de modo que a fórmula está em forma prenexa conjuntiva. Essa combinação é particularmente relevante para os procedimentos de prova automática de teoremas mencionados na Seção~\ref{sec:computacao}, uma vez que isola, de um lado, a estrutura quantificacional da fórmula e, de outro, sua estrutura proposicional.
+
 Em conjunto, essas quatro formas normais evidenciam um traço comum: todas preservam a equivalência lógica da fórmula original, mas nenhuma delas é única, e a transformação de uma fórmula arbitrária em qualquer uma delas pode acarretar um custo computacional não trivial, como já apontado na Seção~\ref{sec:computacao}. Essa tensão entre canonicidade sintática, de um lado, e eficiência de obtenção, de outro, é o que motiva a discussão da Seção~\ref{sec:completude}, dedicada à completude funcional das bases de conectivos que tornam essas formas possíveis, e será retomada de maneira mais técnica no Capítulo~\ref{cap:algoritmos}, no qual os algoritmos de conversão e sua complexidade computacional são analisados em detalhe.
 
 A Tabela \ref{tab:formas-normais} sintetiza as quatro formas normais apresentadas nesta seção, contrastando o domínio lógico em que cada uma se aplica, a restrição sintática que a define e um exemplo típico de fórmula que a satisfaz.
@@ -390,7 +696,7 @@ Os métodos revisados nesta seção — conversão para NNF, distributividade, T
 
 \section{Correção, equivalência lógica e complexidade computacional}\label{sec:correcao-complexidade}
 
-A revisão conduzida na Seção~\ref{sec:revisao-metodos} descreveu o que cada método faz; cabe agora estabelecer o que cada um deles garante e quanto custa garantir. Três propriedades orientam essa análise: a \textit{terminação}, isto é, a certeza de que o procedimento alcança uma fórmula na forma-alvo após um número finito de passos; a \textit{correção}, entendida como a relação semântica que a fórmula produzida mantém com a de entrada; e a \textit{complexidade}, medida tanto no tempo de execução quanto no tamanho da saída. No que diz respeito à correção, convém distinguir duas noções que a Seção~\ref{sec:limitacoes} já havia contraposto: a \textbf{equivalência lógica}, segundo a qual duas fórmulas são verdadeiras sob exatamente as mesmas valorações, e a \textbf{equissatisfazibilidade}, segundo a qual uma é satisfazível se e somente se a outra o é. A primeira implica a segunda, mas não o contrário, e a diferença entre ambas é precisamente o que permite a certos métodos escapar do crescimento exponencial, como se verá adiante.
+A revisão conduzida na Seção~\ref{sec:revisao-metodos} descreveu o que cada método faz; cabe agora estabelecer o que cada um deles garante e quanto custa garantir. Três propriedades orientam essa análise: a \textit{terminação}, isto é, a certeza de que o procedimento alcança uma fórmula na forma-alvo após um número finito de passos; a \textit{correção}, entendida como a relação semântica que a fórmula produzida mantém com a de entrada; e a \textit{complexidade}, medida tanto no tempo de execução quanto no tamanho da saída. No que diz respeito à correção, convém distinguir duas noções que a Seção~\ref{sec:limitacoes} já havia contraposto: a \textbf{equivalência lógica}, segundo a qual duas fórmulas são verdadeiras sob exatamente as mesmas valorações, e a \textbf{equissatisfazibilidade}, segundo a qual uma é satisfazível se e somente se a outra o é (Definições~\ref{def:equivalencia} e~\ref{def:equissat}). A primeira implica a segunda, mas não o contrário, e a diferença entre ambas é precisamente o que permite a certos métodos escapar do crescimento exponencial, como se verá adiante.
  
 Comecemos pela forma normal negativa, cujo procedimento convém formular de maneira recursiva, carregando-se consigo a \textit{polaridade} $\pi \in \{+,-\}$ da subfórmula corrente, isto é, se ela deve ser lida afirmada ($+$) ou negada ($-$). Escrevendo $\overline{\pi}$ para a polaridade oposta a $\pi$ e $p$ para uma variável proposicional, a função $\mathrm{nnf}$ é definida por
 \begin{align*}
@@ -454,7 +760,7 @@ Por fim, (ii) e (iii) fornecem a equissatisfazibilidade e, por estabelecerem uma
  
 A construção estende-se a fórmulas arbitrárias tratando cada ocorrência de conectivo como uma porta com um número constante de cláusulas, inclusive para o bicondicional, que requer quatro. Esse tratamento direto evita a duplicação de operandos que torna a conversão para NNF exponencial em presença de bicondicionais aninhados. O refinamento de Plaisted e Greenbaum \cite{plaisted1986} explora, por sua vez, o fato de que, em uma fórmula em NNF, toda ocorrência não literal tem polaridade positiva: basta, então, codificar a direção $x_\psi\rightarrow([\psi_1]\wedge[\psi_2])$, ou $x_\psi\rightarrow([\psi_1]\vee[\psi_2])$, de modo que cada porta gera duas cláusulas, no caso da conjunção, ou uma, no da disjunção, em vez de três. A prova de correção segue a da Proposição~\ref{prop:tseitin} com o lema enfraquecido para $J(x_\psi)=1\Rightarrow J(\psi)=1$, o que basta para (iii); a extensão de (ii) continua a existir, mas deixa de ser única. A equissatisfazibilidade é, assim, preservada, ao passo que o número de modelos, em geral, não o é.
  
-No caso da forma normal prenexa, a correção apoia-se em duas famílias de equivalências: as regras de deslocamento de quantificadores, que só são equivalências sob a condição lateral de que a variável quantificada não ocorra livre na outra componente — por exemplo, $\psi\wedge\forall x\,\varphi\equiv\forall x\,(\psi\wedge\varphi)$ se $x\notin\mathrm{FV}(\psi)$, em que $\mathrm{FV}(\psi)$ denota o conjunto das variáveis que ocorrem livres em $\psi$ —, e a renomeação de variáveis ligadas ($\alpha$-conversão), que, aplicada previamente, permite satisfazer sempre essa condição. Como cada aplicação desloca um quantificador exatamente uma posição para fora e nenhuma regra o desloca para dentro, o procedimento termina após no máximo $q\cdot d$ deslocamentos, em que $q$ é o número de quantificadores e $d$ a profundidade da fórmula. O custo é, assim, polinomial, e o tamanho da fórmula não cresce, com a mesma ressalva, relativa ao bicondicional, que se fez para a NNF. A skolemização, que frequentemente se segue à prenexação, preserva apenas a equissatisfazibilidade (Seção~\ref{sec:limitacoes}), situando-se, nesse aspecto, do mesmo lado da fronteira que a transformação de Tseitin.
+No caso da forma normal prenexa, a correção apoia-se em duas famílias de equivalências: as regras de deslocamento de quantificadores, que só são equivalências sob a condição lateral de que a variável quantificada não ocorra livre na outra componente — por exemplo, $\psi\wedge\forall x\,\varphi\equiv\forall x\,(\psi\wedge\varphi)$ se $x\notin\mathrm{VL}(\psi)$, em que $\mathrm{VL}(\psi)$ é o conjunto das variáveis livres de $\psi$ (Definição~\ref{def:variaveis}) —, e a renomeação de variáveis ligadas ($\alpha$-conversão), que, aplicada previamente, permite satisfazer sempre essa condição. Como cada aplicação desloca um quantificador exatamente uma posição para fora e nenhuma regra o desloca para dentro, o procedimento termina após no máximo $q\cdot d$ deslocamentos, em que $q$ é o número de quantificadores e $d$ a profundidade da fórmula. O custo é, assim, polinomial, e o tamanho da fórmula não cresce, com a mesma ressalva, relativa ao bicondicional, que se fez para a NNF. A skolemização, que frequentemente se segue à prenexação, preserva apenas a equissatisfazibilidade (Seção~\ref{sec:limitacoes}), situando-se, nesse aspecto, do mesmo lado da fronteira que a transformação de Tseitin.
  
 Resta o método de Quine--McCluskey. Sua correção decorre do resultado de Quine segundo o qual alguma soma de produtos mínima é formada apenas por implicantes primos \cite{quine1952,mccluskey1956}. Quanto ao custo, convém distinguir as duas fases do método. A geração dos implicantes primos produz, para $n$ variáveis, uma quantidade de implicantes limitada por uma função da ordem de $3^n/\sqrt{n}$, limite quase justo, pois existem funções com implicantes primos da ordem de $3^n/n$ \cite{chandra1978}. Como a tabela-verdade tem $N=2^n$ linhas e $3^n=N^{\log_2 3}$, esse número é polinomial em $N$, embora exponencial em $n$. A dificuldade essencial reside na segunda fase, a seleção, entre os implicantes primos, de uma cobertura de tamanho mínimo, problema do tipo cobertura de conjuntos: minimizar uma DNF dada a tabela-verdade é NP-completo, resultado atribuído a Masek, nunca publicado, e reapresentado com uma demonstração mais simples por Allender et al. \cite{allender2006}.
  
