@@ -2,7 +2,7 @@ export type NormalForm = "CNF" | "DNF";
 
 export type Step = {
   index: number;
-  rule: string;        // ex: "Eliminate implication"
+  rule: string;        // ex: "Eliminação da implicação (->)"
   before: string;      // expressão antes
   after: string;       // expressão depois
   note?: string;       // explicação curta pro aluno

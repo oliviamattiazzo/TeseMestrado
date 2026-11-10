@@ -50,7 +50,7 @@ export function eliminateIffImpl(expr: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "Eliminate <->", cur, next, "A <-> B ≡ (A -> B) & (B -> A).");
+    record(steps, "Eliminação do bicondicional (<->)", cur, next, "Substitui A <-> B por (A -> B) & (B -> A).");
     cur = next;
   }
 
@@ -63,7 +63,7 @@ export function eliminateIffImpl(expr: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "Eliminate ->", cur, next, "A -> B ≡ ~A | B.");
+    record(steps, "Eliminação da implicação (->)", cur, next, "Substitui A -> B por ~A | B.");
     cur = next;
   }
 
@@ -83,7 +83,7 @@ export function toNNF(expr: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "Double negation", cur, next, "~~A ≡ A.");
+    record(steps, "Dupla negação", cur, next, "Remove a dupla negação: ~~A ≡ A.");
     cur = next;
   }
 
@@ -98,13 +98,13 @@ export function toNNF(expr: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "De Morgan", cur, next, "Push negation inward.");
+    record(steps, "Leis de De Morgan", cur, next, "Leva a negação para dentro: ~(A & B) ≡ ~A | ~B e ~(A | B) ≡ ~A & ~B.");
     cur = next;
 
     // após De Morgan pode surgir ~~ novamente
     const dd = rewrite(cur, (e) => (e.kind === "NOT" && e.expr.kind === "NOT" ? e.expr.expr : e));
     if (!deepEqual(dd, cur)) {
-      record(steps, "Double negation", cur, dd, "~~A ≡ A.");
+      record(steps, "Dupla negação", cur, dd, "Remove a dupla negação: ~~A ≡ A.");
       cur = dd;
     }
   }
@@ -132,7 +132,7 @@ export function toCNF_fromNNF(nnf: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "Distribute | over & (CNF)", cur, next, "A | (B & C) ≡ (A|B) & (A|C).");
+    record(steps, "Distributividade de | sobre & (FNC)", cur, next, "Distribui a disjunção sobre a conjunção: A | (B & C) ≡ (A|B) & (A|C).");
     cur = next;
   }
 
@@ -159,7 +159,7 @@ export function toDNF_fromNNF(nnf: Expr, steps: Step[]) {
       return e;
     });
     if (deepEqual(next, cur)) break;
-    record(steps, "Distribute & over | (DNF)", cur, next, "A & (B | C) ≡ (A&B) | (A&C).");
+    record(steps, "Distributividade de & sobre | (FND)", cur, next, "Distribui a conjunção sobre a disjunção: A & (B | C) ≡ (A&B) | (A&C).");
     cur = next;
   }
 
