@@ -57,7 +57,7 @@ export default function HomePage() {
       <header className="header">
         <h1>Laboratório de Formas Normais</h1>
         <p className="subtitle">
-          Um ambiente para experimentação em lógica proposicional. Escreva uma expressão lógica e veja a transformação passo a passo em FNC (Forma Normal Conjuntiva) e FND (Forma Normal Disjuntiva).
+          Um ambiente para experimentação em lógica proposicional. Escreva uma expressão lógica e veja a transformação passo a passo em CNF e DNF.
         </p>
       </header>
 
@@ -87,14 +87,14 @@ export default function HomePage() {
                 onClick={() => setActive("CNF")}
                 disabled={!result}
               >
-                FNC
+                CNF
               </button>
               <button
                 className={active === "DNF" ? "tab active" : "tab"}
                 onClick={() => setActive("DNF")}
                 disabled={!result}
               >
-                FND
+                DNF
               </button>
             </div>
           </div>
